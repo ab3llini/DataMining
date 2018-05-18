@@ -9,6 +9,8 @@
 # Icon must end with two \r
 Icon
 
+# pycache
+**/__pycache__
 # Thumbnails
 ._*
 
@@ -45,7 +47,7 @@ Temporary Items
 .idea/**/sqlDataSources.xml
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
-
+.idea
 # Gradle:
 .idea/**/gradle.xml
 .idea/**/libraries
