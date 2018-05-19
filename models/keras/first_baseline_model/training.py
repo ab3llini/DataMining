@@ -4,6 +4,7 @@ import models.keras.first_baseline_model.model as m
 import preprocessing.preprocessing_utils as pre_u
 import models.keras.evaluation as eval
 import numpy as np
+import dataset.utility as utils
 number_of_model = 3
 
 
@@ -16,16 +17,30 @@ def prepare_ds(ds):
     return ds
 
 
-if __name__ == '__main__':
-    TRAIN = True
-    LOAD = False
-    ds = d.read_imputed_onehot_dataset()
-    ds = prepare_ds(ds)
+def prepare_out(ds):
     y = d.to_numpy(ds[['NumberOfSales']])
-    real_y = np.array(y)
-    dy = np.zeros(y.shape)
+    return y
+
+
+def drop_useless(ds):
     x = d.to_numpy(ds.drop(['NumberOfSales', 'StoreID', 'Date', 'IsOpen', 'Region', 'CloudCover',
                             'Max_Sea_Level_PressurehPa', 'WindDirDegrees', 'Max_Dew_PointC'], axis=1))
+    return x
+
+
+if __name__ == '__main__':
+    TRAIN = False
+    LOAD = True
+    ds = d.read_imputed_onehot_dataset()
+    ds = prepare_ds(ds)
+    ds_train = utils.get_frame_in_range(ds, 3, 2016, 12, 2017)
+    ds_test = utils.get_frame_in_range(ds, 1, 2018, 2, 2018)
+    y = prepare_out(ds_train)
+    real_y = np.array(y)
+    dy = np.zeros(y.shape)
+    x = drop_useless(ds_train)
+    y_test = prepare_out(ds_test)
+    x_test = drop_useless(ds_test)
     models = []
     for i in range(number_of_model):
         if not LOAD:
@@ -44,13 +59,14 @@ if __name__ == '__main__':
         print(y)
         y.reshape([len(y), 1])
 
-    preds = np.zeros(y.shape)
+    preds = np.zeros(len(y_test))
     for i in range(number_of_model):
-        preds += models[i].predict(x, 500).squeeze()
+        p = models[i].predict(x_test, 500).squeeze()
+        preds += p
     preds[preds < 0] = 0
     number = 1000
 
     for i in range(min(len(preds), number)):
-        print("PRED: ", preds[i], "   x: ", real_y[i])
+        print("PRED: ", preds[i], "   y_test: ", y_test[i])
 
-    print("R2: ", eval.r2(ds, preds, 'NumberOfSales'))
+    print("R2: ", eval.r2(ds_test, preds, 'NumberOfSales'))

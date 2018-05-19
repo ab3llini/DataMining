@@ -43,4 +43,3 @@ plt.bar(monthly_entries.keys(), monthly_entries.values())
 plt.show()
 ------------------------------------------------------------------------------------
 '''
-
