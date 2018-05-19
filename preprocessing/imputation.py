@@ -2,9 +2,13 @@ import sklearn
 from sklearn.preprocessing.imputation import Imputer
 import numpy as np
 import dataset.dataset as d
+import pandas as p
 
 def full_preprocess(ds):
     set_missings(ds, 'Events', 'none')
+    ds = one_hot(ds, 'Events', split=True, header='Events_')
+    ds = one_hot(ds, 'StoreType', header='StoreType_')
+    ds = one_hot(ds, 'AssortmentType', header='AssortmentType_')
     set_missings(ds, 'CloudCover', 0)
 
     ds = impute_mean(ds, 'Max_VisibilityKm')
@@ -12,6 +16,9 @@ def full_preprocess(ds):
     ds = impute_mean(ds, 'Min_VisibilitykM')
     # Delete not imputed columns
     ds.__delitem__('Max_Gust_SpeedKm_h')
+    ds.__delitem__('Events')
+    ds.__delitem__('StoreType')
+    ds.__delitem__('AssortmentType')
     return ds
 
 
@@ -27,3 +34,28 @@ def set_missings(ds, attr, val):
     for i in range(len(ds)):
         if datasnan[attr][i]:
             ds.set_value(i, attr, val)
+
+
+def one_hot(ds, attr, header, split=False):
+    vals = d.values_of(ds, attr)
+    if split:
+        new_cols = []
+        for v in vals:
+            split = v.split("-")
+            for s in split:
+                if not new_cols.__contains__(s):
+                    new_cols.append(s)
+    else:
+        new_cols = vals
+    for new in new_cols:
+        ds[header + new] = p.Series(np.zeros(len(ds)), ds.index)
+        for i in range(len(ds)):
+            if d.content_of(ds, attr, i).find(new) != -1:
+                ds.set_value(i, header + new, 1)
+    return ds
+
+
+if __name__ == '__main__':
+    ds = d.read_dataset()
+    ds = full_preprocess(ds)
+    d.save_dataset(ds, "imputed_ds_one_hot.csv")

@@ -2,9 +2,20 @@ import pandas
 import os.path
 import numpy as np
 
+
 def read_dataset():
     _dir = os.path.dirname(os.path.abspath(__file__))
     return pandas.read_csv(os.path.join(_dir, "train.csv"))
+
+
+def read_imputed_onehot_dataset():
+    _dir = os.path.dirname(os.path.abspath(__file__))
+    return pandas.read_csv(os.path.join(_dir, "imputed_ds_one_hot.csv"))
+
+
+def save_dataset(ds, name):
+    _dir = os.path.dirname(os.path.abspath(__file__))
+    ds.to_csv(os.path.join(_dir, name))
 
 
 def numeric_only(ds):
@@ -29,6 +40,7 @@ def values_of(df, attr):
 
 if __name__ == '__main__':
     print(read_dataset())
+    print(read_imputed_onehot_dataset().head(15))
 
 
 
