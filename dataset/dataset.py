@@ -20,9 +20,6 @@ def content_of(df, attr, row):
 
 
 def values_of(df, attr):
-    nominal_attrs = list(nominal_only(df))
-    if not nominal_attrs.__contains__(attr):
-        return []
     ris = []
     for i in range(len(df)):
         if not ris.__contains__(content_of(df, attr, i)):

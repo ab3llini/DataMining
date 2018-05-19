@@ -50,7 +50,11 @@ if __name__ == '__main__':
 
     print("###################################################################")
     for attr in d.nominal_only(ds):
-        print("VALUES OF " + attr +": " + str(d.values_of(ds, attr)))
+        print("VALUES OF " + attr + ": " + str(d.values_of(ds, attr)))
+
+    print("###################################################################")
+    for attr in d.numeric_only(ds):
+        print("DISTINCT NUMBER OF " + attr + ": " + str(len(d.values_of(ds, attr))))
 
     for attr in list(d.numeric_only(ds)):
         gr.scatterplot(ds, attr, 'NumberOfSales')
