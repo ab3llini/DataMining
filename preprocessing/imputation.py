@@ -5,6 +5,10 @@ import dataset.dataset as d
 import pandas as p
 
 def full_preprocess(ds):
+    """Exploits the full preprocessing of the original dataset.
+    Categorical attributes are represented into one_hot encoding, missing values are handles and imputed and
+    the column Max_Gust_SpeedKm_h is deleted.
+    Returns a DataFrame object"""
     set_missings(ds, 'Events', 'none')
     ds = one_hot(ds, 'Events', split=True, header='Events_')
     ds = one_hot(ds, 'StoreType', header='StoreType_')
@@ -23,6 +27,8 @@ def full_preprocess(ds):
 
 
 def impute_mean(df, attr):
+    """Imputes the given attribute of the given DataFrame with the mean strategy.
+    Returns a DataFrame object"""
     imp = Imputer(missing_values="NaN", strategy="mean")
     imp.fit(df[[attr]])
     df[attr] = imp.transform(df[[attr]]).ravel()
@@ -30,6 +36,7 @@ def impute_mean(df, attr):
 
 
 def set_missings(ds, attr, val):
+    """Sets the missing values of the given attribute of the given DataFrame with the given value val."""
     datasnan = ds.isna()
     for i in range(len(ds)):
         if datasnan[attr][i]:
@@ -37,6 +44,9 @@ def set_missings(ds, attr, val):
 
 
 def one_hot(ds, attr, header, split=False):
+    """Transforms the given attribute of the given DataFrame object into one hot encoding.
+    If you plan to use this, don't use split attribute.
+    Returns a DataFrame object."""
     vals = d.values_of(ds, attr)
     if split:
         new_cols = []
