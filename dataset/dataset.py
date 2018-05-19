@@ -39,7 +39,7 @@ def content_of(df, attr, row):
 def values_of(df, attr):
     """returns the list of DISTINCT values of the given attribute of the given DataFrame"""
     ris = []
-    for i in range(len(df)):
+    for i in df.index.tolist():
         if not ris.__contains__(content_of(df, attr, i)):
             ris.append(content_of(df, attr, i))
     return ris
