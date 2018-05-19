@@ -18,7 +18,7 @@ def read_imputed_onehot_dataset():
 def save_dataset(ds, name):
     """Saved the given dataset in THIS FOLDER with the given name."""
     _dir = os.path.dirname(os.path.abspath(__file__))
-    ds.to_csv(os.path.join(_dir, name))
+    ds.to_csv(os.path.join(_dir, name), index=False)
 
 
 def numeric_only(ds):
