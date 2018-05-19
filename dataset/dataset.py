@@ -45,9 +45,16 @@ def values_of(df, attr):
     return ris
 
 
+def to_numpy(ds):
+    return ds.values
+
+
 if __name__ == '__main__':
-    print(read_dataset().head(15))
-    print(read_imputed_onehot_dataset().head(15))
+    norm = read_dataset()
+    imp = read_imputed_onehot_dataset()
+    print(norm.head(15))
+    print(imp.head(15))
+    print(imp.shape)
 
 
 
