@@ -12,6 +12,7 @@ default_excluded = [
                 'Min_Sea_Level_PressurehPa'
             ]
 
+selected_dataset = 'mean_var_pre_imputed.csv'
 
 class SetBuilder:
 
@@ -43,13 +44,14 @@ class SetBuilder:
 
     def build(self):
 
+
         if self.target not in self.excluded:
             self.exclude(self.target)
 
         print("Building training and testing set")
         print("Excluded attributes = %s" % self.excluded)
 
-        self.frame = ds_handler.read_imputed_onehot_dataset()
+        self.frame = ds_handler.read_dataset(name=selected_dataset)
 
         self.xtr = ds_util.get_frame_in_range(self.frame, self.split[0], self.split[1], self.split[2], self.split[3])
         # xtr = xtr.drop(xtr[xtr.IsOpen == 0].index)

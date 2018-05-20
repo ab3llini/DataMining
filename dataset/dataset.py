@@ -3,16 +3,18 @@ import os.path
 import numpy as np
 
 
-def read_dataset():
+def read_dataset(name='train.csv'):
     """Returns the original dataset"""
     _dir = os.path.dirname(os.path.abspath(__file__))
-    return pandas.read_csv(os.path.join(_dir, "train.csv"))
+    return pandas.read_csv(os.path.join(_dir, name))
 
 
 def read_imputed_onehot_dataset():
     """Returns the imputed dataset with categorical attributes transformed into one-hot encoding"""
     _dir = os.path.dirname(os.path.abspath(__file__))
     return pandas.read_csv(os.path.join(_dir, "imputed_ds_one_hot.csv"))
+
+
 
 
 def save_dataset(ds, name):
