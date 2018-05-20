@@ -2,13 +2,18 @@ import keras as k
 import dataset.dataset as d
 import models.keras.first_baseline_model.model as m
 import preprocessing.preprocessing_utils as pre_u
-import models.keras.evaluation as eval
+import models.keras.evaluation as eva
 import numpy as np
 import dataset.utility as utils
+import pandas as p
+import preprocessing.imputation as imp
 number_of_model = 3
 
 
 def prepare_ds(ds):
+    ds['Date'] = p.to_datetime(ds['Date'], format='%d/%m/%Y')
+    ds['Day'] = ds['Date'].dt.weekday_name
+    ds = imp.one_hot(ds, 'Day', header='Day_')
     ds = pre_u.eliminate_IsOpen_zeros(ds)
     ds = pre_u.add_avg_per_shop(ds)
     ds = pre_u.add_std_per_shop(ds)
@@ -24,13 +29,26 @@ def prepare_out(ds):
 
 def drop_useless(ds):
     x = d.to_numpy(ds.drop(['NumberOfSales', 'StoreID', 'Date', 'IsOpen', 'Region', 'CloudCover',
-                            'Max_Sea_Level_PressurehPa', 'WindDirDegrees', 'Max_Dew_PointC'], axis=1))
+                            'Max_Sea_Level_PressurehPa', 'WindDirDegrees', 'Max_Dew_PointC',
+                            'Mean_Sea_Level_PressurehPa', 'Min_Sea_Level_PressurehPa', 'Day'], axis=1))
     return x
 
 
+def evaluate(models, number_of_model, ds, y, x, number_print):
+    preds = np.zeros(len(y))
+    for i in range(number_of_model):
+        p = models[i].predict(x, 500).squeeze()
+        preds += p
+    preds[preds < 0] = 0
+    for i in range(min(len(preds), number_print)):
+        print("PRED: ", preds[i], "   y: ", y[i])
+
+    print("R2: ", eva.r2(ds, preds, 'NumberOfSales'))
+
+
 if __name__ == '__main__':
-    TRAIN = False
-    LOAD = True
+    TRAIN = True
+    LOAD = False
     ds = d.read_imputed_onehot_dataset()
     ds = prepare_ds(ds)
     ds_train = utils.get_frame_in_range(ds, 3, 2016, 12, 2017)
@@ -40,7 +58,9 @@ if __name__ == '__main__':
     dy = np.zeros(y.shape)
     x = drop_useless(ds_train)
     y_test = prepare_out(ds_test)
+    d.save_dataset(ds_test, "dataset_to_predict_sales.csv")
     x_test = drop_useless(ds_test)
+
     models = []
     for i in range(number_of_model):
         if not LOAD:
@@ -59,14 +79,12 @@ if __name__ == '__main__':
         print(y)
         y.reshape([len(y), 1])
 
-    preds = np.zeros(len(y_test))
-    for i in range(number_of_model):
-        p = models[i].predict(x_test, 500).squeeze()
-        preds += p
-    preds[preds < 0] = 0
-    number = 1000
+    print("################################################")
+    print("EVALUATION ON TEST:")
+    evaluate(models, number_of_model, ds_test, y_test, x_test, 10)
 
-    for i in range(min(len(preds), number)):
-        print("PRED: ", preds[i], "   y_test: ", y_test[i])
+    print("################################################")
+    print("EVALUATION ON TRAIN:")
+    evaluate(models, number_of_model, ds_train, real_y, x, 0)
 
-    print("R2: ", eval.r2(ds_test, preds, 'NumberOfSales'))
+
