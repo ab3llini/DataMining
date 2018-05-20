@@ -15,9 +15,11 @@ def nonsequentialNN(num, last_relu=True):
 
     y = klayers.Dense(units=500, activation='tanh', use_bias=True)(inputs)
     x = klayers.Dense(units=500, activation='relu', use_bias=True)(inputs)
-    x = klayers.concatenate([klayers.multiply([x, y]), y])
+    z = klayers.Dense(units=500, activation='sigmoid', use_bias=True)(inputs)
+    x = klayers.concatenate([klayers.multiply([x, y]), z])
 
-    x = klayers.Dense(units=1000, activation='relu', use_bias=True)(x)
+    x = klayers.Dense(units=500, activation='relu', use_bias=True)(x)
+    x = klayers.Dense(units=500, activation='relu', use_bias=True)(x)
     if last_relu:
         x = klayers.Dense(units=1, activation='relu', use_bias=True)(x)
     else:

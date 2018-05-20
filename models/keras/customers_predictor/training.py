@@ -49,7 +49,8 @@ def evaluate(models, number_of_model, ds, y, x, number_print):
 
 if __name__ == '__main__':
     TRAIN = True
-    LOAD = False
+    LOAD = True
+    name = "test"
     ds = d.read_imputed_onehot_dataset()
     ds = prepare_ds(ds)
     ds_train = utils.get_frame_in_range(ds, 3, 2016, 12, 2017)
@@ -67,13 +68,13 @@ if __name__ == '__main__':
         if not LOAD:
             models.append(m.nonsequentialNN(x.shape[1], i == 0))
         else:
-            models.append(k.models.load_model("mod" + str(i) + ".h5"))
+            models.append(k.models.load_model("mod" + name + str(i) + ".h5"))
         opt = k.optimizers.adam(lr=1e-6)
         models[i].compile(optimizer=opt, loss='mean_squared_error', metrics=['mae'])
         models[i].summary()
         if TRAIN:
             models[i].fit(x=x, y=y, batch_size=500, epochs=30, verbose=2)
-            models[i].save("mod" + str(i) + ".h5")
+            models[i].save("mod" + name + str(i) + ".h5")
             dy = models[i].predict(x, 500)
             print(dy.shape, y.shape)
         y = y.squeeze() - dy.squeeze()
