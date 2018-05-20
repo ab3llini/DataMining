@@ -10,9 +10,9 @@ import calendar
 # ei = ending year
 
 
-def get_frame_in_range(f, bm, bi, em, ei):
+def get_frame_in_range(f, bm, by, em, ey):
     f["Date"] = pd.to_datetime(f["Date"], format="%d/%m/%Y")
-    mask = (f['Date'] > datetime.date(bi, bm, 1)) & (f['Date'] <= datetime.date(ei, em, calendar.monthrange(ei, em)[1]))
+    mask = (f['Date'] > datetime.date(by, bm, 1)) & (f['Date'] <= datetime.date(ey, em, calendar.monthrange(ey, em)[1]))
     return f.loc[mask]
 
 
