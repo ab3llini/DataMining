@@ -3,6 +3,12 @@ from sklearn import linear_model
 import models.sklearn.setbuilder as sb
 import models.sklearn.evaluator as eval
 
+# LINEAR REGRESSOR, DEG = 2
+# TRAINING SET = mean_var_pre_imputed.csv
+# PREDICTION OF SALES (with customers as input) : R2 = 0.934850052142
+# PREDICTION OF CUSTOMERS : R2 = 0.875309426178
+
+
 # Build training & test sets
 data = sb.SetBuilder(target='NumberOfCustomers').exclude('NumberOfSales').build()
 
