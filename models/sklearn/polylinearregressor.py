@@ -11,7 +11,7 @@ import pandas as pd
 
 
 # Build training & test sets
-data = sb.SetBuilder(target='NumberOfCustomers').exclude('NumberOfSales').build()
+data = sb.SetBuilder(target='NumberOfCustomers', avoid_closed=True).exclude('NumberOfSales').build()
 
 poly_degree = 2
 
@@ -27,8 +27,8 @@ clf.fit(xtr_, data.ytr)
 ypred = clf.predict(xts_)
 
 
-# frame = pd.DataFrame(ypred)
+frame = pd.DataFrame(ypred)
 
-# frame.to_csv('predicted_customers_jan_feb_2018.csv')
+frame.to_csv('predicted_customers_jan_feb_2018.csv')
 
 print('R2 = %s' % eval.evaluate(data.yts, ypred))

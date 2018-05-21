@@ -1,5 +1,6 @@
 import dataset.dataset as ds_handler
 import dataset.utility as ds_util
+import preprocessing.preprocessing_utils as preprocessing
 
 # Note that the set builder will auto exclude the target, there is no need to insert it here
 default_excluded = [
@@ -19,7 +20,7 @@ class SetBuilder:
     # Can pass a different training/testing split tuple
     # If default is set to false no attributes are excluded
     # Provide only one target, default is nr of sales
-    def __init__(self, split=(3, 2016, 12, 2017, 1, 2018, 2, 2018), default=True, target='NumberOfSales'):
+    def __init__(self, split=(3, 2016, 12, 2017, 1, 2018, 2, 2018), default=True, target='NumberOfSales', avoid_closed=False):
 
         self.split = split
 
@@ -29,6 +30,8 @@ class SetBuilder:
         self.ytr = None
         self.xts = None
         self.yts = None
+
+        self.avoid_closed = avoid_closed
 
         self.frame = None
 
@@ -52,6 +55,9 @@ class SetBuilder:
         print("Excluded attributes = %s" % self.excluded)
 
         self.frame = ds_handler.read_dataset(name=selected_dataset)
+
+        if self.avoid_closed:
+            self.frame = preprocessing.eliminate_IsOpen_zeros(self.frame)
 
         self.xtr = ds_util.get_frame_in_range(self.frame, self.split[0], self.split[1], self.split[2], self.split[3])
         # xtr = xtr.drop(xtr[xtr.IsOpen == 0].index)
