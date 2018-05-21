@@ -2,9 +2,15 @@ from sklearn import neural_network
 import models.sklearn.setbuilder as sb
 import models.sklearn.evaluator as eval
 
-# Build training & test sets
-data = sb.SetBuilder(target='NumberOfCustomers').exclude('NumberOfSales').build()
+# MLP REGRESSOR
+# TRAINING SET = mean_var_pre_imputed_per_day.csv
+# CLOSED STORES ARE NOT CONSIDERED
+# PREDICTION OF SALES (with customers as input) : R2 = 0.914437253913
+# PREDICTION OF CUSTOMERS : R2 = 0.887600550772
 
+# Build training & test sets
+data = sb.SetBuilder(target='NumberOfCustomers').exclude('NumberOfSales').exclude('Day').build()
+# data = sb.SetBuilder(target='NumberOfSales').exclude('Day').build()
 
 nn = neural_network.MLPRegressor(
     hidden_layer_sizes=(100,5),
