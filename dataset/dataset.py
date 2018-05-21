@@ -15,6 +15,16 @@ def read_imputed_onehot_dataset():
     return pandas.read_csv(os.path.join(_dir, "imputed_ds_one_hot.csv"))
 
 
+def read_customers_predictor_datas():
+    _dir = os.path.dirname(os.path.abspath(__file__))
+    return pandas.read_csv(os.path.join(_dir, "dataset_to_predict_customers.csv"))
+
+
+def read_sales_predictor_datas():
+    _dir = os.path.dirname(os.path.abspath(__file__))
+    return pandas.read_csv(os.path.join(_dir, "dataset_to_predict_sales.csv"))
+
+
 def save_dataset(ds, name):
     """Saved the given dataset in THIS FOLDER with the given name."""
     _dir = os.path.dirname(os.path.abspath(__file__))
