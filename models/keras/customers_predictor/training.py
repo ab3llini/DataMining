@@ -14,6 +14,8 @@ def prepare_ds(ds):
     ds['Date'] = p.to_datetime(ds['Date'], format='%d/%m/%Y')
     ds['Day'] = ds['Date'].dt.weekday_name
     ds = imp.one_hot(ds, 'Day', header='Day_')
+    ds = pre_u.mean_std_cust_per_shop_per_day(ds)
+    print(ds[['StoreID', 'MeanCustPerShopPerDay', 'StdCustPerShopPerDay']])
     ds = pre_u.eliminate_IsOpen_zeros(ds)
     ds = pre_u.add_avg_cust_per_shop(ds)
     ds = pre_u.add_std_cust_per_shop(ds)
@@ -66,10 +68,10 @@ if __name__ == '__main__':
     models = []
     for i in range(number_of_model):
         if not LOAD:
-            models.append(m.nonsequentialNN(x.shape[1], i == 0))
+            models.append(m.nonsequentialNNtest(x.shape[1], i == 0))
         else:
             models.append(k.models.load_model("mod" + name + str(i) + ".h5"))
-        opt = k.optimizers.adam(lr=1e-6)
+        opt = k.optimizers.adam(lr=3e-6)
         models[i].compile(optimizer=opt, loss='mean_squared_error', metrics=['mae'])
         models[i].summary()
         if TRAIN:

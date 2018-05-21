@@ -180,9 +180,91 @@ def min_cust_per_shop(df, id):
     return temp.min()
 
 
+def mean_std_cust_per_shop_per_day(df):
+    df['MeanCustPerShopPerDay'] = p.Series(np.zeros(len(df)), df.index)
+    df['StdCustPerShopPerDay'] = p.Series(np.zeros(len(df)), df.index)
+    means = dict()
+    stds = dict()
+    num = dict()
+    for i in df.index.tolist():
+        id = d.content_of(df, 'StoreID', i)
+        day = d.content_of(df, 'Day', i)
+        index = str(id) + day
+        val = d.content_of(df, 'NumberOfCustomers', i)
+        try:
+            means[index] += val
+            num[index] += 1
+        except KeyError:
+            means[index] = val
+            num[index] = 1
+    for i in df.index.tolist():
+        id = d.content_of(df, 'StoreID', i)
+        day = d.content_of(df, 'Day', i)
+        index = str(id) + day
+        df.set_value(i, 'MeanCustPerShopPerDay', means[index]/num[index])
+
+    for i in df.index.tolist():
+        id = d.content_of(df, 'StoreID', i)
+        day = d.content_of(df, 'Day', i)
+        index = str(id) + day
+        val = d.content_of(df, 'NumberOfCustomers', i)
+        try:
+            stds[index] += (val - means[index]/num[index]) * (val - means[index]/num[index])
+        except KeyError:
+            stds[index] = (val - means[index]/num[index]) * (val - means[index]/num[index])
+
+    for i in df.index.tolist():
+        id = d.content_of(df, 'StoreID', i)
+        day = d.content_of(df, 'Day', i)
+        index = str(id) + day
+        df.set_value(i, 'StdCustPerShopPerDay', np.sqrt(stds[index]/num[index]))
+    return df
 
 
+def mean_std_sales_per_shop_per_day(df):
+    df['MeanSalesPerShopPerDay'] = p.Series(np.zeros(len(df)), df.index)
+    df['StdSalesPerShopPerDay'] = p.Series(np.zeros(len(df)), df.index)
+    means = dict()
+    stds = dict()
+    num = dict()
+    for i in df.index.tolist():
+        id = d.content_of(df, 'StoreID', i)
+        day = d.content_of(df, 'Day', i)
+        index = str(id) + day
+        val = d.content_of(df, 'NumberOfSales', i)
+        try:
+            means[index] += val
+            num[index] += 1
+        except KeyError:
+            means[index] = val
+            num[index] = 1
+    for i in df.index.tolist():
+        id = d.content_of(df, 'StoreID', i)
+        day = d.content_of(df, 'Day', i)
+        index = str(id) + day
+        df.set_value(i, 'MeanSalesPerShopPerDay', means[index]/num[index])
+
+    for i in df.index.tolist():
+        id = d.content_of(df, 'StoreID', i)
+        day = d.content_of(df, 'Day', i)
+        index = str(id) + day
+        val = d.content_of(df, 'NumberOfSales', i)
+        try:
+            stds[index] += (val - means[index]/num[index]) * (val - means[index]/num[index])
+        except KeyError:
+            stds[index] = (val - means[index]/num[index]) * (val - means[index]/num[index])
+
+    for i in df.index.tolist():
+        id = d.content_of(df, 'StoreID', i)
+        day = d.content_of(df, 'Day', i)
+        index = str(id) + day
+        df.set_value(i, 'StdSalesPerShopPerDay', np.sqrt(stds[index]/num[index]))
+    return df
 
 
-
+def add_mean_std_per_shop_per_day(ds):
+    ds['Date'] = p.to_datetime(ds['Date'], format='%d/%m/%Y')
+    ds['Day'] = ds['Date'].dt.weekday_name
+    ds = mean_std_cust_per_shop_per_day(ds)
+    return ds
 

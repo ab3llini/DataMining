@@ -14,6 +14,8 @@ def prepare_ds(ds):
     ds['Date'] = p.to_datetime(ds['Date'], format='%d/%m/%Y')
     ds['Day'] = ds['Date'].dt.weekday_name
     ds = imp.one_hot(ds, 'Day', header='Day_')
+    ds = pre_u.mean_std_sales_per_shop_per_day(ds)
+    print(ds[['StoreID', 'MeanSalesPerShopPerDay', 'StdSalesPerShopPerDay']])
     ds = pre_u.eliminate_IsOpen_zeros(ds)
     ds = pre_u.add_avg_per_shop(ds)
     ds = pre_u.add_std_per_shop(ds)
@@ -71,7 +73,7 @@ if __name__ == '__main__':
         models[i].compile(optimizer=opt, loss='mean_squared_error', metrics=['mae'])
         models[i].summary()
         if TRAIN:
-            models[i].fit(x=x, y=y, batch_size=500, epochs=15, verbose=1)
+            models[i].fit(x=x, y=y, batch_size=500, epochs=15, verbose=2)
             models[i].save("mod" + str(i) + ".h5")
             dy = models[i].predict(x, 500)
             print(dy.shape, y.shape)

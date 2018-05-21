@@ -37,7 +37,7 @@ def region_error(real, pred, regions, shop_ids, dates):
             regions_totals[regionsmap[str(shop_region_map[str(id)])]] += total_real[shopsmap[str(id)]][monthsmap[str(m)]]
     for i in range(len(regions_errors)):
         regions_errors[i] = regions_errors[i] / regions_totals[i]
-    return regions_errors
+    return regions_errors, total_real, total_pred
 
 
 def getmonth(date):
