@@ -34,6 +34,7 @@ def boxplot(df, x, y, jitter=False):
     plt.show()
 
 
+<<<<<<< HEAD
 def monthlysalesplot(df, bm, by, em, ey):
     month_x = []
     sales_y = []
@@ -70,3 +71,21 @@ def monthlycustomersplot(df, bm, by, em, ey):
 
     sb.barplot(x=month_x, y=sales_y, hue_order=None)
     plt.show()
+=======
+if __name__ == '__main__':
+    import dataset.dataset as d
+    import dataset.utility as utils
+    import models.keras.evaluation as eva
+    import pandas as pd
+    ds = d.read_imputed_onehot_dataset()
+    y = 2016
+    m = 3
+    while y != 2018 or m != 3:
+        sub_ds = utils.get_frame_in_range(ds, m, y, m, y)
+        expected_out = d.to_numpy(sub_ds[['NumberOfSales']]).squeeze()
+        print(str(m) + "/" + str(y) + ": ", expected_out.sum())
+        m += 1
+        if m == 13:
+            m = 1
+            y += 1
+>>>>>>> 5d954f240893629868ed6a1eb75bcab22cfad3a6

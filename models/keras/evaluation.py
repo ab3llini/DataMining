@@ -25,8 +25,8 @@ def region_error(real, pred, regions, shop_ids, dates):
     regionsunique = np.unique(regions)
     regionsmap = map_values_pos(regionsunique)
     errorsshape = [len(shops), len(months)]
-    total_real = calculate_total_sales_per_month_per_shop(real, shop_ids, dates, monthsmap, shopsmap, errorsshape)
     total_pred = calculate_total_sales_per_month_per_shop(pred, shop_ids, dates, monthsmap, shopsmap, errorsshape)
+    total_real = calculate_total_sales_per_month_per_shop(real, shop_ids, dates, monthsmap, shopsmap, errorsshape)
     shop_region_map = map_shop_region(shop_ids, regions)
     regions_errors = np.zeros(regionsunique.shape)
     regions_totals = np.zeros(regionsunique.shape)
@@ -66,3 +66,13 @@ def calculate_total_sales_per_month_per_shop(values, shop_ids, dates, monthsmap,
     for i in range(tot):
         ris[shopsmap[str(shop_ids[i])]][monthsmap[str(getmonth(dates[i]))]] += values[i]
     return ris
+
+
+def get_total_sales_per_month_per_shop(pred, regions, shop_ids, dates):
+    months = np.unique(np.array([date.split("-")[1] for date in dates]))
+    monthsmap = map_values_pos(months)
+    shops = np.unique(shop_ids)
+    shopsmap = map_values_pos(shops)
+    errorsshape = [len(shops), len(months)]
+    total_pred = calculate_total_sales_per_month_per_shop(pred, shop_ids, dates, monthsmap, shopsmap, errorsshape)
+    return total_pred

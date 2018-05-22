@@ -66,6 +66,6 @@ def one_hot(ds, attr, header, split=False):
 
 
 if __name__ == '__main__':
-    ds = d.read_dataset()
+    ds = d.read_test_dataset()
     ds = full_preprocess(ds)
-    d.save_dataset(ds, "imputed_ds_one_hot.csv")
+    d.save_dataset(ds, "imputed_test_ds_one_hot.csv")

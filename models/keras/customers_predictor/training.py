@@ -15,7 +15,6 @@ def prepare_ds(ds):
     ds['Day'] = ds['Date'].dt.weekday_name
     ds = imp.one_hot(ds, 'Day', header='Day_')
     ds = pre_u.mean_std_cust_per_shop_per_day(ds)
-    print(ds[['StoreID', 'MeanCustPerShopPerDay', 'StdCustPerShopPerDay']])
     ds = pre_u.eliminate_IsOpen_zeros(ds)
     ds = pre_u.add_avg_cust_per_shop(ds)
     ds = pre_u.add_std_cust_per_shop(ds)
