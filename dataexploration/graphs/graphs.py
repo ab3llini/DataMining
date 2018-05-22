@@ -33,8 +33,6 @@ def boxplot(df, x, y, jitter=False):
     sb.swarmplot(x, y, data=df, color=".25")
     plt.show()
 
-
-<<<<<<< HEAD
 def monthlysalesplot(df, bm, by, em, ey):
     month_x = []
     sales_y = []
@@ -71,7 +69,8 @@ def monthlycustomersplot(df, bm, by, em, ey):
 
     sb.barplot(x=month_x, y=sales_y, hue_order=None)
     plt.show()
-=======
+
+    
 if __name__ == '__main__':
     import dataset.dataset as d
     import dataset.utility as utils
@@ -88,4 +87,3 @@ if __name__ == '__main__':
         if m == 13:
             m = 1
             y += 1
->>>>>>> 5d954f240893629868ed6a1eb75bcab22cfad3a6
