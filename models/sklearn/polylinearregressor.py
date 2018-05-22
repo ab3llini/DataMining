@@ -2,6 +2,7 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn import linear_model
 import models.sklearn.setbuilder as sb
 import models.sklearn.evaluator as eval
+import dataset.dataset as ds
 import pandas as pd
 
 # LINEAR REGRESSOR, DEG = 2
@@ -17,8 +18,8 @@ import pandas as pd
 # PREDICTION OF CUSTOMERS : R2 = 0.847136789595
 
 # Build training & test sets
-# data = sb.SetBuilder(target='NumberOfCustomers').exclude('NumberOfSales').exclude('Day').build()
-data = sb.SetBuilder(target='NumberOfSales').exclude('Day').build()
+data = sb.SetBuilder(target='NumberOfCustomers').exclude('NumberOfSales').exclude('Day').build()
+# data = sb.SetBuilder(target='NumberOfSales').exclude('Day').build()
 
 poly_degree = 2
 
@@ -34,8 +35,6 @@ clf.fit(xtr_, data.ytr)
 ypred = clf.predict(xts_)
 
 
-frame = pd.DataFrame(ypred)
-
-frame.to_csv('predicted_customers_jan_feb_2018.csv')
+ds.save_dataset(pd.DataFrame(ypred), 'customer_pred_jan_feb_LR_DEG2.csv')
 
 print('R2 = %s' % eval.evaluate(data.yts, ypred))

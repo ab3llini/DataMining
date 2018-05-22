@@ -2,18 +2,29 @@ from sklearn import neural_network
 import models.sklearn.setbuilder as sb
 import models.sklearn.evaluator as eval
 
-# MLP REGRESSOR
+
+
+# MLP REGRESSOR (100,5)
 # TRAINING SET = mean_var_pre_imputed_per_day.csv
 # CLOSED STORES ARE NOT CONSIDERED
 # PREDICTION OF SALES (with customers as input) : R2 = 0.914437253913
 # PREDICTION OF CUSTOMERS : R2 = 0.887600550772
 
+# MLP REGRESSOR (80,5)
+# TRAINING SET = mean_var_pre_imputed_per_day.csv
+# CLOSED STORES ARE NOT CONSIDERED
+# PREDICTION OF SALES (with customers as input) : R2 = 0.911611329049
+# PREDICTION OF CUSTOMERS : R2 = 0.890258164994
+
+import dataset.dataset as ds
+import pandas as pd
+
 # Build training & test sets
 data = sb.SetBuilder(target='NumberOfCustomers').exclude('NumberOfSales').exclude('Day').build()
-# data = sb.SetBuilder(target='NumberOfSales').exclude('Day').build()
+#data = sb.SetBuilder(target='NumberOfSales').exclude('Day').build()
 
 nn = neural_network.MLPRegressor(
-    hidden_layer_sizes=(100,5),
+    hidden_layer_sizes=(80,5),
     activation='relu',
     solver='adam',
     batch_size='auto',
@@ -37,4 +48,7 @@ nn = neural_network.MLPRegressor(
 n = nn.fit(data.xtr, data.ytr.ravel())
 
 ypred = nn.predict(data.xts)
+
+ds.save_dataset(pd.DataFrame(ypred), 'customer_pred_jan_feb_NN.csv')
+
 print('R2 = %s' % eval.evaluate(data.yts, ypred))

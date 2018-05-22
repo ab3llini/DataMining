@@ -2,6 +2,7 @@ from sklearn import linear_model
 import models.sklearn.setbuilder as sb
 import models.sklearn.evaluator as eval
 
+
 # LINEAR REGRESSOR, DEG = 1
 # TRAINING SET = mean_var_pre_imputed.csv
 # CLOSED STORES ARE NOT CONSIDERED
@@ -24,5 +25,6 @@ print("Linear regression started, polynomial degree = 1")
 regression = linear_model.LinearRegression()
 regression.fit(data.xtr, data.ytr)
 ypred = regression.predict(data.xts)
+
 
 print('R2 = %s' % eval.evaluate(data.yts, ypred))
