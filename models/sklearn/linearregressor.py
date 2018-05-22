@@ -1,7 +1,8 @@
 from sklearn import linear_model
 import models.sklearn.setbuilder as sb
 import models.sklearn.evaluator as eval
-
+import dataset.dataset as ds
+import pandas as pd
 
 # LINEAR REGRESSOR, DEG = 1
 # TRAINING SET = mean_var_pre_imputed.csv
@@ -25,6 +26,8 @@ print("Linear regression started, polynomial degree = 1")
 regression = linear_model.LinearRegression()
 regression.fit(data.xtr, data.ytr)
 ypred = regression.predict(data.xts)
+
+ds.save_dataset(pd.DataFrame(ypred), 'customer_pred_jan_feb_LR_DEG1.csv')
 
 
 print('R2 = %s' % eval.evaluate(data.yts, ypred))

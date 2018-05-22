@@ -1,6 +1,8 @@
 from sklearn import neural_network
 import models.sklearn.setbuilder as sb
 import models.sklearn.evaluator as eval
+import dataset.dataset as ds
+import pandas as pd
 
 
 
@@ -16,8 +18,6 @@ import models.sklearn.evaluator as eval
 # PREDICTION OF SALES (with customers as input) : R2 = 0.911611329049
 # PREDICTION OF CUSTOMERS : R2 = 0.890258164994
 
-import dataset.dataset as ds
-import pandas as pd
 
 # Build training & test sets
 data = sb.SetBuilder(target='NumberOfCustomers').exclude('NumberOfSales').exclude('Day').build()

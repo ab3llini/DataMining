@@ -21,7 +21,7 @@ def get_frame_in_range(f, bm, by, em, ey):
             print("*** can't get frame in range ! wtf format did you use for the date ??!")
             raise e2
 
-    mask = (f['Date'] > datetime.date(by, bm, 1)) & (f['Date'] <= datetime.date(ey, em, calendar.monthrange(ey, em)[1]))
+    mask = (f['Date'] >= datetime.date(by, bm, 1)) & (f['Date'] <= datetime.date(ey, em, calendar.monthrange(ey, em)[1]))
     return f.loc[mask]
 
 
