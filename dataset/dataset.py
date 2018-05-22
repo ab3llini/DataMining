@@ -9,10 +9,22 @@ def read_dataset(name='train.csv'):
     return pandas.read_csv(os.path.join(_dir, name))
 
 
+def read_test_dataset():
+    """Returns the test dataset"""
+    _dir = os.path.dirname(os.path.abspath(__file__))
+    return pandas.read_csv(os.path.join(_dir, "test.csv"))
+
+
 def read_imputed_onehot_dataset():
     """Returns the imputed dataset with categorical attributes transformed into one-hot encoding"""
     _dir = os.path.dirname(os.path.abspath(__file__))
     return pandas.read_csv(os.path.join(_dir, "imputed_ds_one_hot.csv"))
+
+
+def read_imputed_onehot_test_dataset():
+    """Returns the imputed test dataset with categorical attributes transformed into one-hot encoding"""
+    _dir = os.path.dirname(os.path.abspath(__file__))
+    return pandas.read_csv(os.path.join(_dir, "imputed_test_ds_one_hot.csv"))
 
 
 def read_customers_predictor_datas():
