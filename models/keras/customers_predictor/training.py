@@ -50,8 +50,9 @@ def evaluate(models, number_of_model, ds, y, x, number_print):
 
 if __name__ == '__main__':
     TRAIN = True
-    LOAD = True
-    name = "test"
+    LOAD = False
+    SAVE_DS = True
+    name = "test2_"
     ds = d.read_imputed_onehot_dataset()
     ds = prepare_ds(ds)
     ds_train = utils.get_frame_in_range(ds, 3, 2016, 12, 2017)
@@ -61,7 +62,8 @@ if __name__ == '__main__':
     dy = np.zeros(y.shape)
     x = drop_useless(ds_train)
     y_test = prepare_out(ds_test)
-    d.save_dataset(ds_test, "dataset_to_predict_customers.csv")
+    if SAVE_DS:
+        d.save_dataset(ds_test, "dataset_to_predict_customers.csv")
     x_test = drop_useless(ds_test)
 
     models = []
@@ -70,11 +72,11 @@ if __name__ == '__main__':
             models.append(m.nonsequentialNNtest(x.shape[1], i == 0))
         else:
             models.append(k.models.load_model("mod" + name + str(i) + ".h5"))
-        opt = k.optimizers.adam(lr=3e-6)
+        opt = k.optimizers.adam(lr=3e-5)
         models[i].compile(optimizer=opt, loss='mean_squared_error', metrics=['mae'])
         models[i].summary()
         if TRAIN:
-            models[i].fit(x=x, y=y, batch_size=500, epochs=30, verbose=2)
+            models[i].fit(x=x, y=y, batch_size=10000, epochs=50, verbose=2, validation_data=(x_test, y_test))
             models[i].save("mod" + name + str(i) + ".h5")
             dy = models[i].predict(x, 500)
             print(dy.shape, y.shape)

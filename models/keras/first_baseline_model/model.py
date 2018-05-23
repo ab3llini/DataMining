@@ -26,3 +26,22 @@ def nonsequentialNN(num, last_relu=True):
     else:
         x = klayers.Dense(units=1, activation='linear', use_bias=True)(x)
     return k.Model(inputs=inputs, outputs=x)
+
+
+def nonsequentialNNDropout(num, last_relu=True):
+    inputs = klayers.Input(shape=(num,))
+    y = klayers.Dense(units=400, activation='relu', use_bias=True)(inputs)
+    x = klayers.Dense(units=400, activation='linear', use_bias=True)(inputs)
+
+    z = klayers.Dense(units=800, activation='tanh', use_bias=True)(inputs)
+    z = klayers.Dense(units=800, activation='linear', use_bias=True)(z)
+
+    h = klayers.multiply([klayers.concatenate([x, y]), z])
+
+    x = klayers.Dense(units=400, activation='relu', use_bias=True)(h)
+    x = klayers.Dropout(rate=0.15)(x)
+    if last_relu:
+        x = klayers.Dense(units=1, activation='relu', use_bias=True)(x)
+    else:
+        x = klayers.Dense(units=1, activation='linear', use_bias=True)(x)
+    return k.Model(inputs=inputs, outputs=x)
