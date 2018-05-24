@@ -1,7 +1,9 @@
 import seaborn as sb
+import pandas as pd
 import matplotlib.pyplot as plt
-import numpy
+import numpy as np
 from dataset.utility import get_frame_in_range
+from dataset.dataset import to_numpy
 
 def scatterplot(df, x=None, y=None, colour=None, regression=False):
     if x is None or y is None:
@@ -45,7 +47,7 @@ def monthlysalesplot(df, bm, by, em, ey):
             bm = 1
             by += 1
 
-    sb.barplot(x=month_x, y=sales_y, hue_order=None)
+    sb.barplot(x=month_x, y=sales_y, hue_order=None).set_title("Monthly Number of Sales (All shops)")
     plt.show()
 
 
@@ -67,10 +69,35 @@ def monthlycustomersplot(df, bm, by, em, ey):
             bm = 1
             by += 1
 
-    sb.barplot(x=month_x, y=sales_y, hue_order=None)
+    sb.barplot(x=month_x, y=sales_y, hue_order=None).set_title("Monthly Number of Customers (All shops)")
     plt.show()
 
-    
+
+def opendaybeforegeneralplot(df, storeID):
+    IsOpenList = list(to_numpy(df["IsOpen"]).squeeze())
+    IsOpenList.pop()
+    IsOpenList.insert(0, 1)
+    dftoplot = pd.DataFrame(np.array(IsOpenList).reshape(523021, 1), columns=["OpenDayBefore"])
+    dftoplot = df.assign(OpenDayBefore=dftoplot)
+    dftoplotpershop = dftoplot[dftoplot["StoreID"] == storeID]
+    sb.boxplot(x="OpenDayBefore", y="NumberOfSales", data=dftoplotpershop).set_title("Sales / Shop Availability")
+    plt.show()
+
+
+def opendaybeforeonweekplot(df, storeID):
+    df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+    df['Day'] = df['Date'].dt.weekday_name
+    df = df.drop(df[df["Day"] == "Sunday"].index)
+    IsOpenList = list(to_numpy(df["IsOpen"]).squeeze())
+    IsOpenList.pop()
+    IsOpenList.insert(0, 1)
+    dftoplot = pd.DataFrame(np.array(IsOpenList).reshape(448375, 1), columns=["OpenDayBefore"])
+    dftoplot = df.assign(OpenDayBefore=dftoplot)
+    dftoplotpershop = dftoplot[dftoplot["StoreID"] == storeID]
+    sb.boxplot(x="OpenDayBefore", y="NumberOfSales", data=dftoplotpershop).set_title("Sales / Shop Availability (-Sun)")
+    plt.show()
+
+
 if __name__ == '__main__':
     import dataset.dataset as d
     import dataset.utility as utils
