@@ -59,7 +59,7 @@ def one_hot(ds, attr, header, split=False):
         new_cols = vals
     for new in new_cols:
         ds[header + new] = p.Series(np.zeros(len(ds)), ds.index)
-        for i in range(len(ds)):
+        for i in ds.index.tolist():
             if d.content_of(ds, attr, i).find(new) != -1:
                 ds.set_value(i, header + new, 1)
     return ds

@@ -2,6 +2,8 @@ from sklearn import tree
 import dataset.setbuilder as sb
 import models.sklearn.evaluator as eval
 import numpy as np
+import pickle
+
 
 print("Plain Decision regression tree without bagging")
 
@@ -16,7 +18,6 @@ dtree.fit(data.xtr, data.ytr)
 ypred = dtree.predict(data.xts)
 
 print('R2 = %s' % eval.evaluate(data.yts, ypred))
-
 print("Plain Decision regression tree without bagging")
 
 it = 20
