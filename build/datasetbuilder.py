@@ -3,7 +3,7 @@ import preprocessing.preprocessing_utils as pre_u
 import pandas as p
 import preprocessing.imputation as imp
 import numpy as np
-
+import dataset.utility as utils
 
 def build_sales_predictor_dataset(name):
     ds = d.read_imputed_onehot_dataset()
@@ -52,10 +52,18 @@ def select_features(name, featlist, fname):
 
 if __name__ == '__main__':
     # build_sales_predictor_dataset("fully_preprocessed_ds.csv")
-    select_features("fully_preprocessed_ds.csv", ['IsHoliday', 'NearestCompetitor',
-                                                  'NumberOfSales', 'NumberOfCustomers', 'HasPromotions',
-                                                  'Date', 'MeanSalesPerShopPerDay',
-                                                  'StdSalesPerShopPerDay',
-                                                  'meanshop',
-                                                  'mean_std_shop',
-                                                  'max_shop','min_shop'], "fpd_select.csv")
+    #select_features("fully_preprocessed_ds.csv", ['IsHoliday', 'NearestCompetitor',
+    #                                              'NumberOfSales', 'NumberOfCustomers', 'HasPromotions',
+    #                                              'Date', 'MeanSalesPerShopPerDay',
+    #                                              'StdSalesPerShopPerDay',
+    #                                              'meanshop',
+    #                                              'mean_std_shop',
+    #                                              'max_shop','min_shop'], "fpd_select.csv")
+    ds = d.read_dataset("fully_preprocessed_ds.csv")
+    ds = utils.get_frame_in_range(ds, 1, 2018, 2, 2018)
+    cust = d.read_dataset("customer_pred_jan_feb_NN.csv")
+    cust = d.to_numpy(cust[['NumberOfCustomers']]).squeeze()
+    cust = np.array(cust, dtype=np.int32)
+    cust[cust < 0] = 0
+    ds['NumberOfCustomers'] = p.Series(cust, ds.index)
+    d.save_dataset(ds, "fpd_with_customers.csv")
