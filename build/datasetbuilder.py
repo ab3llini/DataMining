@@ -2,6 +2,7 @@ import dataset.dataset as d
 import preprocessing.preprocessing_utils as pre_u
 import pandas as p
 import preprocessing.imputation as imp
+import numpy as np
 
 
 def build_sales_predictor_dataset(name):
@@ -39,4 +40,22 @@ def __prepare_customers_ds(ds):
     ds = pre_u.add_std_cust_per_shop(ds)
     ds = pre_u.add_max_cust_per_shop(ds)
     ds = pre_u.add_min_cust_per_shop(ds)
+    ds['NearestCompetitor'] = p.Series(np.array([1/ds['NearestCompetitor'][i] for i in ds.index.tolist()]), ds.index)
     return ds
+
+
+def select_features(name, featlist, fname):
+    ds = d.read_dataset(name)
+    ds = ds[featlist]
+    d.save_dataset(ds, fname)
+
+
+if __name__ == '__main__':
+    # build_sales_predictor_dataset("fully_preprocessed_ds.csv")
+    select_features("fully_preprocessed_ds.csv", ['IsHoliday', 'NearestCompetitor',
+                                                  'NumberOfSales', 'NumberOfCustomers', 'HasPromotions',
+                                                  'Date', 'MeanSalesPerShopPerDay',
+                                                  'StdSalesPerShopPerDay',
+                                                  'meanshop',
+                                                  'mean_std_shop',
+                                                  'max_shop','min_shop'], "fpd_select.csv")

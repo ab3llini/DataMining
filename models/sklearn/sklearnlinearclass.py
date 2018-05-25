@@ -3,11 +3,11 @@ import numpy as np
 
 
 class LinearSklearn:
-    def __init__(self, nmodels):
+    def __init__(self, nmodels, mod):
         self.models = []
         self.n = nmodels
         for _ in range(nmodels):
-            self.models.append(linear_model.LinearRegression())
+            self.models.append(mod())
 
     def train(self, x, y):
         y = y.squeeze()
@@ -15,15 +15,18 @@ class LinearSklearn:
         weights = np.ones(shape=y.shape[0], dtype=np.float32)
         for i in range(self.n):
             print("Training model: " + str(i))
-            self.models.append(linear_model.LinearRegression())
             self.models[i].fit(x, to_pred, sample_weight=weights)
             preds = self.models[i].predict(x)
-            print(preds)
             to_pred = to_pred - preds
+            weights = np.abs(to_pred)
 
     def predict(self, x):
         ypred = np.zeros(shape=[x.shape[0]], dtype=np.float32)
-
         for i in range(self.n):
             ypred += self.models[i].predict(x)
         return ypred
+
+
+    def print_weights(self):
+        for i in range(self.n):
+            print(self.models[i].coef_)
