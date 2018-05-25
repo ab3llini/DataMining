@@ -3,8 +3,6 @@ import models.sklearn.setbuilder as sb
 import models.sklearn.evaluator as eval
 import dataset.dataset as ds
 import pandas as pd
-import numpy as np
-import models.sklearn.sklearnlinearclass as skc
 
 # LINEAR REGRESSOR, DEG = 1
 # TRAINING SET = mean_var_pre_imputed.csv
@@ -19,19 +17,15 @@ import models.sklearn.sklearnlinearclass as skc
 # PREDICTION OF CUSTOMERS : R2 = 0.86925841471
 
 # Build training & test sets
-# data = sb.SetBuilder(target='NumberOfCustomers').exclude('NumberOfSales').exclude('Day').build()
-data = sb.SetBuilder(target='NumberOfSales', dataset="fully_preprocessed_ds.csv").build()
-
-NMODELS = 5
-models = []
-
-model = skc.LinearSklearn(NMODELS)
+data = sb.SetBuilder(target='NumberOfSales', default=False).exclude('Day').build()
+# data = sb.SetBuilder(target='NumberOfSales').exclude('Day').build()
 
 # Performs simple linear regression
-model.train(data.xtr, data.ytr)
+print("Linear regression started, polynomial degree = 1")
 
-ypred = model.predict(data.xts)
-
+regression = linear_model.LinearRegression()
+regression.fit(data.xtr, data.ytr)
+ypred = regression.predict(data.xts)
 
 # ds.save_dataset(pd.DataFrame(ypred), 'customer_pred_jan_feb_LR_DEG1.csv')
 
