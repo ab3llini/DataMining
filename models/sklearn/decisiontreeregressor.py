@@ -17,9 +17,9 @@ data = sb.SetBuilder(target='NumberOfSales', autoexclude=True, dataset='mean_var
 #dtree.fit(data.xtr, data.ytr)
 #ypred = dtree.predict(data.xts)
 
-#pr.save_model(dtree, 'decision_tree_sales_', compression=False)
+#pr.save_model(dtree, 'decision_tree_sales')
 
-dtree = pr.load_model('decision_tree_sales_.pkl')
+dtree = pr.load_model('decision_tree_sales')
 ypred = dtree.predict(data.xts)
 
 
