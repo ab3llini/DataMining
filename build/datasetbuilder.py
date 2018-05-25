@@ -61,8 +61,8 @@ if __name__ == '__main__':
     #                                              'max_shop','min_shop'], "fpd_select.csv")
     ds = d.read_dataset("fully_preprocessed_ds.csv")
     ds = utils.get_frame_in_range(ds, 1, 2018, 2, 2018)
-    cust = d.read_dataset("customer_pred_jan_feb_NN.csv")
-    cust = d.to_numpy(cust[['NumberOfCustomers']]).squeeze()
+    cust = d.read_dataset("customer_pred_jan_feb_LR_DEG1.csv")
+    cust = d.to_numpy(cust[['0']]).squeeze()
     cust = np.array(cust, dtype=np.int32)
     cust[cust < 0] = 0
     ds['NumberOfCustomers'] = p.Series(cust, ds.index)

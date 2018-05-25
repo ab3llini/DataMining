@@ -52,3 +52,11 @@ plt.bar(monthly_entries.keys(), monthly_entries.values())
 plt.show()
 ------------------------------------------------------------------------------------
 '''
+
+
+def get_frames_per_region(df, reg):
+    return df[df['Region'] == reg]
+
+
+def get_frames_per_shop(df, id):
+    return df[df['StoreID'] == id]

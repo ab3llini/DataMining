@@ -1,4 +1,3 @@
-from sklearn import linear_model
 import numpy as np
 
 
@@ -18,7 +17,6 @@ class LinearSklearn:
             self.models[i].fit(x, to_pred, sample_weight=weights)
             preds = self.models[i].predict(x)
             to_pred = to_pred - preds
-            weights = np.abs(to_pred)
 
     def predict(self, x):
         ypred = np.zeros(shape=[x.shape[0]], dtype=np.float32)
