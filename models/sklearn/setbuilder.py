@@ -24,7 +24,7 @@ class SetBuilder:
     # Can pass a different training/testing split tuple
     # If default is set to false no attributes are excluded
     # Provide only one target, default is nr of sales
-    def __init__(self, split=(3, 2016, 12, 2017, 1, 2018, 2, 2018), default=True, target='NumberOfSales', dataset='mean_var_pre_imputed_per_day.csv'):
+    def __init__(self, split=(3, 2016, 12, 2017, 1, 2018, 2, 2018), df=None, autoexlude=False, target='NumberOfSales', dataset='mean_var_pre_imputed_per_day.csv'):
 
         self.split = split
 
@@ -38,17 +38,29 @@ class SetBuilder:
         self.filter = None
 
         self.dataset = dataset
+        self.frame = df
 
-        self.frame = ds_handler.read_dataset(name=self.dataset)
+        if self.frame is None:
+            self.frame = ds_handler.read_dataset(name=self.dataset)
+        else:
+            if autoexlude:
+                print("Important: autoexclude is ON, program might crash when accessing non existing attributes")
 
-        if default:
+        if autoexlude:
             self.excluded = default_excluded
         else:
             self.excluded = []
 
-    def exclude(self, attr):
-        if attr != 'Date':
-            self.excluded.append(attr)
+    def exclude_list(self, list):
+        for e in list:
+            if e != 'Date':
+                self.excluded.append(e)
+        return self
+
+    def exclude(self, *attr):
+        for e in attr:
+            if e != 'Date':
+                self.excluded.append(e)
         return self
 
     # Apply before BUILD
@@ -89,7 +101,11 @@ class SetBuilder:
         if 'Date' in self.excluded:
             self.excluded.remove('Date')
 
-        self.frame = self.frame.drop(columns=self.excluded)
+        try:
+            self.frame = self.frame.drop(columns=self.excluded)
+        except Exception as e:
+            print("Error: trying to access a non existing attribute.. Did you turn off autoexclude?")
+            return None
 
         print("Building training and testing set")
         print("Excluded attributes = %s" % self.excluded)
