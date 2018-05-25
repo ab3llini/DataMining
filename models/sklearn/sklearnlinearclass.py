@@ -14,7 +14,7 @@ class LinearSklearn:
         weights = np.ones(shape=y.shape[0], dtype=np.float32)
         for i in range(self.n):
             print("Training model: " + str(i))
-            self.models[i].fit(x, to_pred, sample_weight=weights)
+            self.models[i].fit(x, to_pred)
             preds = self.models[i].predict(x)
             to_pred = to_pred - preds
 
