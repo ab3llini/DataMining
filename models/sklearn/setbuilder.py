@@ -35,9 +35,11 @@ class SetBuilder:
         self.xts = None
         self.yts = None
 
+        self.filter = None
+
         self.dataset = dataset
 
-        self.frame = None
+        self.frame = ds_handler.read_dataset(name=self.dataset)
 
         if default:
             self.excluded = default_excluded
@@ -45,18 +47,26 @@ class SetBuilder:
             self.excluded = []
 
     def exclude(self, attr):
-        self.excluded.append(attr)
+        if attr != 'Date':
+            self.excluded.append(attr)
+        return self
+
+    # Apply before BUILD
+    def only(self, columns):
+        columns.append(self.target)
+        if 'Date' not in columns:
+            columns.append('Date')
+            self.frame = self.frame[columns]
 
         return self
 
+    # Apply after BUILD
     def random_sampling(self, percentage):
 
         print("Random sampling")
 
         size = round(self.xtr.shape[0] * percentage)
         idxs = []
-        sample_xtr = []
-        sample_ytr = []
         # Bagging with bootstraping
         for i in range(0, size):
             idxs.append(random.randint(0, self.xtr.shape[0]))
@@ -73,26 +83,27 @@ class SetBuilder:
 
     def build(self):
 
-        if self.target not in self.excluded:
-            self.exclude(self.target)
+        if self.filter is not None:
+            self.frame = self.frame[self.filter]
+
+        if 'Date' in self.excluded:
+            self.excluded.remove('Date')
+
+        self.frame = self.frame.drop(columns=self.excluded)
 
         print("Building training and testing set")
         print("Excluded attributes = %s" % self.excluded)
 
-        self.frame = ds_handler.read_dataset(name=self.dataset)
-
         self.xtr = ds_util.get_frame_in_range(self.frame, self.split[0], self.split[1], self.split[2], self.split[3])
         self.xts = ds_util.get_frame_in_range(self.frame, self.split[4], self.split[5], self.split[6], self.split[7])
 
-        self.xtr = ds_handler.to_numpy(self.xtr.drop(columns=self.excluded))
-        self.xts = ds_handler.to_numpy(self.xts.drop(columns=self.excluded))
+        self.xtr = ds_handler.to_numpy(self.xtr.drop(columns=['Date', self.target]))
+        self.xts = ds_handler.to_numpy(self.xts.drop(columns=['Date', self.target]))
 
         self.ytr = ds_util.get_frame_in_range(self.frame, self.split[0], self.split[1], self.split[2], self.split[3])
-        # ytr = ytr.drop(ytr[ytr.IsOpen == 0].index)
         self.ytr = ds_handler.to_numpy(self.ytr[[self.target]])
 
         self.yts = ds_util.get_frame_in_range(self.frame, self.split[4], self.split[5], self.split[6], self.split[7])
-        # yts = yts.drop(yts[yts.IsOpen == 0].index)
         self.yts = ds_handler.to_numpy(self.yts[[self.target]])
 
         print('Done.\nTraining set has %s samples\nTesting set has %s samples'
