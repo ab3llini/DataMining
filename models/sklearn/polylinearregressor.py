@@ -3,6 +3,8 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn import linear_model
 import dataset.setbuilder as sb
 import models.sklearn.evaluator as eval
+import models.sklearn.persistence as pr
+
 
 # LINEAR REGRESSOR, DEG = 2
 # TRAINING SET = mean_var_pre_imputed.csv
@@ -17,10 +19,10 @@ import models.sklearn.evaluator as eval
 # PREDICTION OF CUSTOMERS : R2 = 0.847136789595
 
 # Build training & test sets
-data = sb.SetBuilder(target='NumberOfSales', default=False).only(['NearestCompetitor', 'Region_AreaKM2', 'NumberOfCustomers', 'CustomersMeanPerStore' ,'CustomersVariancePerStore','MeanCustPerShopPerDay', 'StdCustPerShopPerDay']).build()
+data = sb.SetBuilder(target='NumberOfSales', autoexclude=False).only(['NearestCompetitor', 'Region_AreaKM2']).build()
 # data = sb.SetBuilder(target='NumberOfSales').exclude('Day').build()
 
-poly_degree = 5
+poly_degree = 2
 
 # Performs simple linear regression
 print("Linear regression started, polynomial degree = %s" % poly_degree)
@@ -32,6 +34,8 @@ print("Fit transformed")
 
 clf = linear_model.Lasso()
 clf.fit(xtr_, data.ytr)
+
+pr.save_model(clf, 'test')
 
 print("Fit done")
 

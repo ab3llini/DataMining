@@ -24,7 +24,7 @@ class SetBuilder:
     # Can pass a different training/testing split tuple
     # If default is set to false no attributes are excluded
     # Provide only one target, default is nr of sales
-    def __init__(self, split=(3, 2016, 12, 2017, 1, 2018, 2, 2018), df=None, autoexlude=False, target='NumberOfSales', dataset='mean_var_pre_imputed_per_day.csv'):
+    def __init__(self, split=(3, 2016, 12, 2017, 1, 2018, 2, 2018), df=None, autoexclude=False, target='NumberOfSales', dataset='mean_var_pre_imputed_per_day.csv'):
 
         self.split = split
 
@@ -43,10 +43,10 @@ class SetBuilder:
         if self.frame is None:
             self.frame = ds_handler.read_dataset(name=self.dataset)
         else:
-            if autoexlude:
+            if autoexclude:
                 print("Important: autoexclude is ON, program might crash when accessing non existing attributes")
 
-        if autoexlude:
+        if autoexclude:
             self.excluded = default_excluded
         else:
             self.excluded = []
