@@ -1,6 +1,5 @@
 from sklearn import tree
-import dataset.dataset as ds
-import models.sklearn.setbuilder as sb
+import dataset.setbuilder as sb
 import models.sklearn.evaluator as eval
 
 

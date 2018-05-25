@@ -1,8 +1,6 @@
 from sklearn import linear_model
-import models.sklearn.setbuilder as sb
+import dataset.setbuilder as sb
 import models.sklearn.evaluator as eval
-import dataset.dataset as ds
-import pandas as pd
 
 # LINEAR REGRESSOR, DEG = 1
 # TRAINING SET = mean_var_pre_imputed.csv
