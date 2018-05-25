@@ -81,17 +81,16 @@ class SetBuilder:
         idxs = []
         # Bagging with bootstraping
         for i in range(0, size):
-            idxs.append(random.randint(0, self.xtr.shape[0]))
+            idxs.append(random.randint(0, self.xtr.shape[0]-1))
 
         sample_xtr = [self.xtr[i] for i in idxs]
         sample_ytr = [self.ytr[i] for i in idxs]
 
-        self.xtr = np.array(sample_xtr)
-        self.ytr = np.array(sample_ytr)
-
         print('Done.\nTraining set has %s samples\nTesting set has %s samples' % (len(self.ytr), len(self.yts)))
 
-        return self
+        return np.array(sample_xtr), np.array(sample_ytr)
+
+
 
     def build(self):
 

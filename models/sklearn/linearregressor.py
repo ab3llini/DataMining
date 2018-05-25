@@ -15,8 +15,8 @@ import models.sklearn.evaluator as eval
 # PREDICTION OF CUSTOMERS : R2 = 0.86925841471
 
 # Build training & test sets
-data = sb.SetBuilder(target='NumberOfSales', default=False).exclude('Day').build()
-# data = sb.SetBuilder(target='NumberOfSales').exclude('Day').build()
+#data = sb.SetBuilder(target='NumberOfSales', default=False).exclude('Day').build()
+data = sb.SetBuilder(target='NumberOfCustomers', autoexlude=True).exclude('NumberOfSales').build()
 
 # Performs simple linear regression
 print("Linear regression started, polynomial degree = 1")
