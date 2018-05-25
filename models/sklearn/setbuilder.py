@@ -1,5 +1,7 @@
 import dataset.dataset as ds_handler
 import dataset.utility as ds_util
+import random
+import numpy as np
 import preprocessing.preprocessing_utils as preprocessing
 
 # Note that the set builder will auto exclude the target, there is no need to insert it here
@@ -44,6 +46,28 @@ class SetBuilder:
 
     def exclude(self, attr):
         self.excluded.append(attr)
+
+        return self
+
+    def random_sampling(self, percentage):
+
+        print("Random sampling")
+
+        size = round(self.xtr.shape[0] * percentage)
+        idxs = []
+        sample_xtr = []
+        sample_ytr = []
+        # Bagging with bootstraping
+        for i in range(0, size):
+            idxs.append(random.randint(0, self.xtr.shape[0]))
+
+        sample_xtr = [self.xtr[i] for i in idxs]
+        sample_ytr = [self.ytr[i] for i in idxs]
+
+        self.xtr = np.array(sample_xtr)
+        self.ytr = np.array(sample_ytr)
+
+        print('Done.\nTraining set has %s samples\nTesting set has %s samples' % (len(self.ytr), len(self.yts)))
 
         return self
 
