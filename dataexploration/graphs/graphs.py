@@ -109,7 +109,7 @@ def frequencypershop(df, storeID, target="NumberOfSales", daily=False, shoptype=
         sb.distplot(a=df[df["Day"] == "Thursday"][target], label="Thursday").set_title(title)
         sb.distplot(a=df[df["Day"] == "Friday"][target], label="Friday").set_title(title)
         sb.distplot(a=df[df["Day"] == "Saturday"][target], label="Saturday").set_title(title)
-        #sb.distplot(a=df[df["Day"] == "Sunday"][target]), label="Sunday").set_title(title)
+        sb.distplot(a=df[df["Day"] == "Sunday"][target], label="Sunday").set_title(title)
     elif shoptype:
         sb.distplot(a=df[df["StoreType_Hyper Market"] == 1][target], label="Hyper Market").set_title(title)
         sb.distplot(a=df[df["StoreType_Super Market"] == 1][target], label="Super Market").set_title(title)
@@ -121,6 +121,23 @@ def frequencypershop(df, storeID, target="NumberOfSales", daily=False, shoptype=
     plt.show()
 
 
+def availabilityplot(df):
+    title = "Availability Distribution Per Day"
+    df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+    df['Day'] = df['Date'].dt.weekday_name
+
+    sb.distplot(a=df[df["Day"] == "Monday"]["IsOpen"], label="Monday").set_title(title)
+    sb.distplot(a=df[df["Day"] == "Tuesday"]["IsOpen"], label="Tuesday").set_title(title)
+    sb.distplot(a=df[df["Day"] == "Wednesday"]["IsOpen"], label="Wednesday").set_title(title)
+    sb.distplot(a=df[df["Day"] == "Thursday"]["IsOpen"], label="Thursday").set_title(title)
+    sb.distplot(a=df[df["Day"] == "Friday"]["IsOpen"], label="Friday").set_title(title)
+    sb.distplot(a=df[df["Day"] == "Saturday"]["IsOpen"], label="Saturday").set_title(title)
+    sb.distplot(a=df[df["Day"] == "Sunday"]["IsOpen"], label="Sunday").set_title(title)
+
+    plt.legend()
+    plt.show()
+
+
 def scattertargets(df, hue):
     if hue == "Day":
         df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
@@ -128,6 +145,7 @@ def scattertargets(df, hue):
 
     sb.lmplot(x="NumberOfCustomers", y="NumberOfSales", data=df, hue=hue)
     plt.show()
+
 
 if __name__ == '__main__':
     import dataset.dataset as d

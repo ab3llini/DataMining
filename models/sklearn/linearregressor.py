@@ -1,4 +1,5 @@
 import sklearn as skl
+from sklearn import linear_model
 import models.sklearn.setbuilder as sb
 import models.sklearn.evaluator as eval
 import evaluation.evaluation as ev_cust
@@ -20,6 +21,7 @@ import models.sklearn.sklearnlinearclass as skc
 # PREDICTION OF CUSTOMERS : R2 = 0.86925841471
 
 # Build training & test sets
+
 # data = sb.SetBuilder(target='NumberOfCustomers').exclude('NumberOfSales').exclude('Day').build()
 # data = sb.SetBuilder(target='NumberOfSales', dataset="fully_preprocessed_ds.csv").build()
 ds_name = "fully_preprocessed_ds.csv"
@@ -50,6 +52,7 @@ for i in range(SET_OF_MODELS_DIM):
     ypred += models[i].predict(data.xts)
 
 ypred = ypred/SET_OF_MODELS_DIM
+
 print('R2 = %s' % eval.evaluate(data.yts, ypred))
 
 re, totr, totp = ev_cust.region_error(data.yts, ypred, regions, ids, dates)
