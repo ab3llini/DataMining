@@ -4,13 +4,17 @@ import preprocessing.preprocessing_utils as preprocessing
 
 # Note that the set builder will auto exclude the target, there is no need to insert it here
 default_excluded = [
-                'Region',
+                'StoreID',
                 'Date',
-                'WindDirDegrees',
-                'Max_Wind_SpeedKm_h',
+                'IsOpen',
+                'Region',
+                'CloudCover',
                 'Max_Sea_Level_PressurehPa',
+                'WindDirDegrees',
+                'Max_Dew_PointC',
                 'Mean_Sea_Level_PressurehPa',
-                'Min_Sea_Level_PressurehPa'
+                'Min_Sea_Level_PressurehPa',
+                'Day'
             ]
 
 class SetBuilder:

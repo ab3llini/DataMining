@@ -26,3 +26,14 @@ class SalesPredictor:
             preds += p
         preds[preds < 0] = 0
         return preds
+
+    def get_weights(self, modnum):
+        return self.models[modnum].get_weights()
+
+
+if __name__ == '__main__':
+    pred = SalesPredictor(3, "test")
+    wl = pred.get_weights(0)[0]
+    print(wl)
+    print(np.max(wl))
+    print(np.min(wl))

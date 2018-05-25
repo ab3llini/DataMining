@@ -55,6 +55,7 @@ if __name__ == '__main__':
     name = "test"
     ds = d.read_imputed_onehot_dataset()
     ds = prepare_ds(ds)
+    d.save_dataset(ds, "fully_preprocessed_ds.csv")
     ds_train = utils.get_frame_in_range(ds, 3, 2016, 12, 2017)
     ds_test = utils.get_frame_in_range(ds, 1, 2018, 2, 2018)
     y = prepare_out(ds_train)
