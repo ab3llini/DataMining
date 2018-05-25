@@ -29,5 +29,4 @@ ypred = regression.predict(data.xts)
 
 # ds.save_dataset(pd.DataFrame(ypred), 'customer_pred_jan_feb_LR_DEG1.csv')
 
-
 print('R2 = %s' % eval.evaluate(data.yts, ypred))
