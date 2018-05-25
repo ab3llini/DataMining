@@ -1,10 +1,9 @@
 import seaborn as sb
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from dataset.utility import get_frame_in_range
 from dataset.dataset import to_numpy
-from dataset.dataset import values_of
+
 
 def scatterplot(df, x=None, y=None, colour=None, regression=False):
     if x is None or y is None:
@@ -151,7 +150,6 @@ def scattertargets(df, hue):
 if __name__ == '__main__':
     import dataset.dataset as d
     import dataset.utility as utils
-    import models.keras.evaluation as eva
     import pandas as pd
     ds = d.read_imputed_onehot_dataset()
     y = 2016

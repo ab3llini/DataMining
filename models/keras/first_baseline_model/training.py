@@ -2,7 +2,7 @@ import keras as k
 import dataset.dataset as d
 import models.keras.first_baseline_model.model as m
 import preprocessing.preprocessing_utils as pre_u
-import models.keras.evaluation as eva
+import evaluation.evaluation as eva
 import numpy as np
 import dataset.utility as utils
 import pandas as p
