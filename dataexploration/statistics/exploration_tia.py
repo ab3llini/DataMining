@@ -9,11 +9,12 @@ from sklearn.preprocessing import MinMaxScaler
 
 if __name__ == "__main__":
 
-    correlation_analysis = True
-    PCA_analysis = True
-    PCA_correlation_attributes = True
+    correlation_analysis = False
+    PCA_analysis = False
+    PCA_correlation_attributes = False
     PCA_analysis_attribute = 'Region_AreaKM2'
 
+    sb.set_style("whitegrid")
     sb.set(style="white", color_codes=True)
     sb.set_context(rc={"font.family": 'sans', "font.size": 5, "axes.titlesize": 8, "axes.labelsize": 8})
 
@@ -84,3 +85,9 @@ if __name__ == "__main__":
             numeric_clustermap = sb.clustermap(new_df_corr, square="True", cmap="Blues", annot=True)
             pl.figure(figsize=(20,20))
             pl.show()
+
+
+    ax = sb.jointplot(x="NearestCompetitor", y="NumberOfSales", data=data_numeric, marker='+')
+    pl.show()
+    ax = sb.jointplot(x="NearestCompetitor", y="NumberOfCustomers", data=data_numeric, marker='+')
+    pl.show()
