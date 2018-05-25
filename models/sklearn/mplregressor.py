@@ -1,5 +1,5 @@
 from sklearn import neural_network
-import models.sklearn.setbuilder as sb
+import dataset.setbuilder as sb
 import models.sklearn.evaluator as eval
 import dataset.dataset as ds
 import pandas as pd

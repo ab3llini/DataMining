@@ -1,12 +1,6 @@
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn import linear_model
-import models.sklearn.setbuilder as sb
+import dataset.setbuilder as sb
 import models.sklearn.evaluator as eval
 from sklearn import svm
-
-import dataset.dataset as ds
-import pandas as pd
-import numpy as np
 
 data = sb.SetBuilder(target='NumberOfSales').build().random_sampling(percentage=0.1)
 clf = svm.SVR()

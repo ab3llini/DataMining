@@ -1,12 +1,13 @@
 import sklearn as skl
 from sklearn import linear_model
-import models.sklearn.setbuilder as sb
+import dataset.setbuilder as sb
 import models.sklearn.evaluator as eval
 import evaluation.evaluation as ev_cust
 import dataset.dataset as ds
 import dataset.utility as utils
 import numpy as np
 import models.sklearn.sklearnlinearclass as skc
+
 
 # LINEAR REGRESSOR, DEG = 1
 # TRAINING SET = mean_var_pre_imputed.csv
