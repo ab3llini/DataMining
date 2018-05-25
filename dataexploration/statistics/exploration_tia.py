@@ -12,10 +12,10 @@ if __name__ == "__main__":
     correlation_analysis = True
     PCA_analysis = True
     PCA_correlation_attributes = True
-    PCA_analysis_attribute = 'Region'
+    PCA_analysis_attribute = 'Region_AreaKM2'
 
     sb.set(style="white", color_codes=True)
-    sb.set_context(rc={"font.family": 'sans', "font.size": 5, "axes.titlesize": 24, "axes.labelsize": 24})
+    sb.set_context(rc={"font.family": 'sans', "font.size": 5, "axes.titlesize": 8, "axes.labelsize": 8})
 
     data = datasetfun.read_imputed_onehot_dataset()
 
@@ -55,6 +55,7 @@ if __name__ == "__main__":
 
         marker_size = 10
         pl.scatter(data_projected_scaled[:, 0], data_projected_scaled[:, 1], marker_size,  alpha=0.5, c = data_numeric[PCA_analysis_attribute], cmap=pl.cm.get_cmap('spectral', 10))
+
         # delete the comment in order to use the projected data NOT normalized
         # pl.scatter(projected_data[:, 0], projected_data[:, 1], marker_size,  alpha=0.5, c = data_numeric[PCA_analysis_attribute], cmap=pl.cm.get_cmap('spectral', 10))
         pl.colorbar()
@@ -65,16 +66,21 @@ if __name__ == "__main__":
 
         if PCA_correlation_attributes == True:
 
+            # can be changed between 'component_2' and 'component_1'. We allow to plot one component at time for sake
+            # of clarity, to not plot to many attributes
+            PCA_component_to_plot = 'component_1'
+
             print("dataframe PCA scaled:", df_projected_scaled.shape)
             print("dataframe numeric only:", data_numeric.shape)
 
-            new_df = data_numeric
+            new_df = data_numeric.drop(['StoreID', 'IsOpen'], axis=1)
 
-            new_df = pd.concat([new_df, df_projected_scaled], axis=1)
+            new_df = pd.concat([new_df, df_projected_scaled[PCA_component_to_plot]], axis=1)
 
             print("merged dataframe:", new_df.shape)
 
             new_df_corr = new_df.corr(method="pearson")
 
             numeric_clustermap = sb.clustermap(new_df_corr, square="True", cmap="Blues", annot=True)
+            pl.figure(figsize=(20,20))
             pl.show()
