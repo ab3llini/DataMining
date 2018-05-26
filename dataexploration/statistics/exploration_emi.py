@@ -1,13 +1,16 @@
-from dataset.dataset import read_imputed_onehot_dataset
+import dataset.dataset as ds
 import dataexploration.graphs.graphs as gr
 
-df=read_imputed_onehot_dataset()
-# gr.monthlyplot(read_imputed_onehot_dataset(), 3, 2016, 2, 2018)
-# gr.monthlyplot(read_imputed_onehot_dataset(), 3, 2016, 2, 2018, "NumberOfCustomers")
-# gr.opendaybeforegeneralplot(read_imputed_onehot_dataset(), 1000)
-# gr.opendaybeforeonweekplot(read_imputed_onehot_dataset(), 1000)
-# gr.competitorplot(read_imputed_onehot_dataset())
-# gr.competitorplot(read_imputed_onehot_dataset(), "NumberOfCustomers")
-# gr.frequencypershop(df, 0, daily=True, target="NumberOfCustomers")
+df_ni= ds.read_dataset()
+df=ds.read_imputed_onehot_dataset()
+# gr.monthlyplot(df, 3, 2016, 2, 2018)
+# gr.monthlyplot(df, 3, 2016, 2, 2018, "NumberOfCustomers")
+# gr.opendaybeforegeneralplot(df, 1000)
+# gr.opendaybeforeonweekplot(df, 1000)
+# gr.competitorplot(df)
+# gr.competitorplot(df, "NumberOfCustomers")
+gr.frequencypershop(df_ni, 0, target="StoreType", region=True)
 # gr.scattertargets(df, "Region")
-gr.availabilityplot(df)
+# gr.availabilityplot(df)
+# gr.frequencypershop(df, storeID=0, target="NumberOfCustomers", events=True)
+# gr.barplot(df=df_ni, x="StoreType", y=hue="Region")
