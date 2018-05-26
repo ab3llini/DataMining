@@ -89,12 +89,14 @@ def monthlyplot(df, bm=3, by=2016, em=2, ey=2018, regions=None, storetype=False,
                 bm = 1
                 by += 1
 
-        sb.pointplot(x=month_x, y=sales_y_1, color=palette[0], hue_order=None, label="Hyper Market")
-        sb.pointplot(x=month_x, y=sales_y_2, color=palette[1], hue_order=None, label="Super Market")
-        sb.pointplot(x=month_x, y=sales_y_3, color=palette[2], hue_order=None, label="Standard Market")
-        sb.pointplot(x=month_x, y=sales_y_4, color=palette[3], hue_order=None, label="Shopping Center")
+        pdf1 = pd.DataFrame(data={"Month": month_x, target: sales_y_1, "Type": "Hyper Market"})
+        pdf2 = pd.DataFrame(data={"Month": month_x, target: sales_y_2, "Type": "Super Market"})
+        pdf3 = pd.DataFrame(data={"Month": month_x, target: sales_y_3, "Type": "Standard Market"})
+        pdf4 = pd.DataFrame(data={"Month": month_x, target: sales_y_4, "Type": "Shopping Center"})
+        pdf = pd.concat([pdf1, pdf2, pdf3, pdf4])
+        sb.pointplot(x="Month", y=target, data=pdf, hue="Type")
     else:
-        col=0
+        pdf = []
         palette = sb.color_palette("hls", 11)
         for i in regions:
             month_x = []
@@ -107,13 +109,14 @@ def monthlyplot(df, bm=3, by=2016, em=2, ey=2018, regions=None, storetype=False,
                 if bm == 13:
                     bm = 1
                     by += 1
-            sb.pointplot(x=month_x, y=sales_y, color=palette[col], hue_order=None, label=str(i))
+            pdf.append(pd.DataFrame(data={"Month":month_x, target:sales_y, "Region":i}))
 
             bm = base_bm
             by = base_by
             em = base_em
             ey = base_ey
-            col+=1
+        pdf = pd.concat(pdf)
+        sb.pointplot(x="Month", y=target, data=pdf, hue="Region")
 
     plt.legend()
     plt.show()
