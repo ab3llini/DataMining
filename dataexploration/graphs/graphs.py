@@ -1,7 +1,10 @@
 import seaborn as sb
+import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from dataset.utility import get_frame_in_range
+import dataset.dataset as ds
+from dataset.dataset import values_of
 from dataset.dataset import to_numpy
 
 
@@ -41,25 +44,78 @@ def barplot(df, x, y, hue=None):
     plt.show()
 
 
-def monthlyplot(df, bm, by, em, ey, target="NumberOfSales"):
+def monthlyplot(df, bm=3, by=2016, em=2, ey=2018, regions=None, storetype=False, target="NumberOfSales"):
     if em == 12:
         em = 1
         ey += 1
     else:
         em += 1
 
-    month_x = []
-    sales_y = []
-    while bm != em or by != ey:
-        dfframe = get_frame_in_range(df, bm, by, bm, by)
-        month_x.append(str(bm) + "-" + str(by))
-        sales_y.append(dfframe[target].sum())
-        bm += 1
-        if bm == 13:
-            bm = 1
-            by += 1
+    base_bm = bm
+    base_by = by
+    base_em = em
+    base_ey = ey
 
-    sb.barplot(x=month_x, y=sales_y, hue_order=None).set_title("Monthly " + target +" (All shops)")
+    if regions is None and not storetype:
+        month_x = []
+        sales_y = []
+        while bm != em or by != ey:
+            dfframe = get_frame_in_range(df, bm, by, bm, by)
+            month_x.append(str(bm) + "-" + str(by))
+            sales_y.append(dfframe[target].sum())
+            bm += 1
+            if bm == 13:
+                bm = 1
+                by += 1
+
+        sb.pointplot(x=month_x, y=sales_y, hue="Region", hue_order=None).set_title("Monthly " + target + " (All shops)")
+    elif storetype:
+        col = 0
+        palette = sb.color_palette("hls", 4)
+        month_x = []
+        sales_y_1 = []
+        sales_y_2 = []
+        sales_y_3 = []
+        sales_y_4 = []
+        while bm != em or by != ey:
+            dfframe = get_frame_in_range(df, bm, by, bm, by)
+            month_x.append(str(bm) + "-" + str(by))
+            sales_y_1.append(dfframe[dfframe["StoreType_Hyper Market"] == 1][target].mean())
+            sales_y_2.append(dfframe[dfframe["StoreType_Super Market"] == 1][target].mean())
+            sales_y_3.append(dfframe[dfframe["StoreType_Standard Market"] == 1][target].mean())
+            sales_y_4.append(dfframe[dfframe["StoreType_Shopping Center"] == 1][target].mean())
+            bm += 1
+            if bm == 13:
+                bm = 1
+                by += 1
+
+        sb.pointplot(x=month_x, y=sales_y_1, color=palette[0], hue_order=None, label="Hyper Market")
+        sb.pointplot(x=month_x, y=sales_y_2, color=palette[1], hue_order=None, label="Super Market")
+        sb.pointplot(x=month_x, y=sales_y_3, color=palette[2], hue_order=None, label="Standard Market")
+        sb.pointplot(x=month_x, y=sales_y_4, color=palette[3], hue_order=None, label="Shopping Center")
+    else:
+        col=0
+        palette = sb.color_palette("hls", 11)
+        for i in regions:
+            month_x = []
+            sales_y = []
+            while bm != em or by != ey:
+                dfframe = get_frame_in_range(df[df["Region"] == i], bm, by, bm, by)
+                month_x.append(str(bm) + "-" + str(by))
+                sales_y.append(dfframe[target].mean())
+                bm += 1
+                if bm == 13:
+                    bm = 1
+                    by += 1
+            sb.pointplot(x=month_x, y=sales_y, color=palette[col], hue_order=None, label=str(i))
+
+            bm = base_bm
+            by = base_by
+            em = base_em
+            ey = base_ey
+            col+=1
+
+    plt.legend()
     plt.show()
 
 
@@ -188,6 +244,16 @@ def scattertargets(df, hue):
 
 def cloudcoverbarplot(df, target="NumberOfSales"):
     sb.barplot(x="CloudCover", y=target, data=df).set_title(target + "Per CloudCover (All shops)")
+    plt.show()
+
+
+def frequencystatplot(df):
+    regions = [0,1,2,3,4,5,6,7,8,9,10]
+    compstat = []
+    for i in regions:
+        compstat.append(len(values_of(df[df["Region"] == i], "StoreID")))
+
+    sb.barplot(x=regions, y=compstat)
     plt.show()
 
 
