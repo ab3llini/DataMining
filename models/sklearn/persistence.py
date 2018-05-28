@@ -38,7 +38,7 @@ def save_model(model, name, compression=True):
 
     # Create file
     file = os.path.join(models_path, name)
-    open(file, 'a').close()
+    open(file, 'w').close()
     joblib.dump(model, file, compress=compression_lv if compression else 0)
 
 # Load a model.
