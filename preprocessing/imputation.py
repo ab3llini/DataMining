@@ -65,6 +65,20 @@ def one_hot(ds, attr, header, split=False):
     return ds
 
 
+def one_hot_numeric(ds, attr, header):
+    """Transforms the given attribute of the given DataFrame object into one hot encoding.
+    If you plan to use this, don't use split attribute.
+    Returns a DataFrame object."""
+    vals = d.values_of(ds, attr)
+    new_cols = vals
+    for new in new_cols:
+        ds[header + str(new)] = p.Series(np.zeros(len(ds)), ds.index)
+        for i in ds.index.tolist():
+            if d.content_of(ds, attr, i) == new:
+                ds.set_value(i, header + str(new), 1)
+    return ds
+
+
 if __name__ == '__main__':
     ds = d.read_test_dataset()
     ds = full_preprocess(ds)

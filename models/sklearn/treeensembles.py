@@ -9,6 +9,8 @@ from sklearn import linear_model
 from sklearn import ensemble
 from sklearn import tree
 import numpy as np
+from inspect import getmembers
+import preprocessing.imputation as imp
 import pandas
 import models.sklearn.sklearnlinearclass as skc
 from sklearn.preprocessing import PolynomialFeatures
@@ -19,48 +21,50 @@ def prepare_out(df):
 
 
 def drop_useless(df, axis=0):
-    x = ds.to_numpy(df.drop(['NumberOfSales', 'StoreID', 'Date', 'IsOpen', 'CloudCover',
+    dropped = df.drop(['NumberOfSales', 'StoreID', 'Date', 'IsOpen', 'CloudCover',
                             'Max_Sea_Level_PressurehPa', 'WindDirDegrees', 'Max_Dew_PointC',
                             'NumberOfCustomers', 'Day', 'Mean_Sea_Level_PressurehPa',
-                            'Min_Sea_Level_PressurehPa'], axis=axis))
+                            'Min_Sea_Level_PressurehPa', 'Region', 'Month'], axis=axis)
+    #print(list(dropped))
+    x = ds.to_numpy(dropped)
     return x
 
 
 def model():
-    return ensemble.RandomForestRegressor()
+    return linear_model.Ridge(alpha=5)
 
 
+if __name__ == '__main__':
+    datas = ds.read_dataset("mean_var_on_customers_from_tain.csv")
+    datas['Month'] = datas['Date']
+    datas['Month'] = datas['Month'].apply(lambda x: x.split("-")[1])
+    datas = imp.one_hot_numeric(datas, 'Month', 'Month_')
+    datas = imp.one_hot_numeric(datas, 'Region', 'Region_')
+    datas = preprocessing_utils.mean_cust_per_month_per_region(datas, utils.get_frame_in_range(datas, 3, 2016, 12, 2017))
+    datas = sb.SetBuilder(target='NumberOfCustomers', autoexclude=True, df=datas).exclude('NumberOfSales', 'Month').build()
+    n = 10
+    mods = []
+    for i in range(n):
+        print(i+1)
+        x, y = datas.random_sampling(1.0)
+        mod = skc.LinearSklearn(1, model)
+        mod.train(x, y)
+        mods.append(mod)
+        p = mod.predict(x).squeeze()
+        print("TRAIN R2: ", eval.r2_score(y, p))
+        print("TEST R2: ", eval.r2_score(datas.yts, mod.predict(datas.xts)))
+        print("##########################")
 
-datas = ds.read_dataset("mean_var_on_customers_from_tain.csv")
-train = utils.get_frame_in_range(datas, 3, 2016, 12, 2017)
-test = utils.get_frame_in_range(datas, 1, 2018, 2, 2018)
+    #tree.export_graphviz(mod.models[0])
+    #print("SAVED")
+    preds = []
+    for i in range(n):
+        preds.append(mods[i].predict(datas.xts))
 
+    custpred = np.array(preds).mean(axis=0)
 
-d_reg = train
-d_reg_t = test
-print("N_SAMPLES: ", len(d_reg) + len(d_reg_t))
-y = prepare_out(d_reg)
-x = drop_useless(d_reg, 1)
-y_t = prepare_out(d_reg_t)
-x_t = drop_useless(d_reg_t, 1)
-mod = skc.LinearSklearn(1, model)
-mod.train(x, y)
-p = mod.predict(x).squeeze()
-pt = mod.predict(x_t).squeeze()
-r2_t = eval.r2_score(y_t, pt)
-print("TRAIN R2: ", eval.r2_score(y, p))
-print("TEST R2: ", r2_t)
-print("##########################")
+    print("TEST R2: ", eval.r2_score(datas.yts, custpred))
 
-
-custpred = []
-for i in test.index.tolist():
-    row = test.loc[i]
-    row = drop_useless(row).reshape([1, -1])
-    custpred.append(mod.predict(row).squeeze())
-
-custpred = np.array(custpred)
-
-new = pandas.DataFrame(index=test.index)
-new['NumberOfCustomers'] = pandas.Series(custpred, test.index)
-ds.save_dataset(new, "cust_ensemble_predictions.csv")
+    new = pandas.DataFrame()
+    new['NumberOfCustomers'] = pandas.Series(custpred)
+    ds.save_dataset(new, "cust_ensemble_predictions6.csv")

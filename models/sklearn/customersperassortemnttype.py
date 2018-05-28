@@ -7,7 +7,6 @@ import dataset.utility as utils
 from sklearn import linear_model
 from sklearn import ensemble
 from sklearn import pipeline
-from sklearn import tree
 import numpy as np
 import pandas
 import models.sklearn.sklearnlinearclass as skc
@@ -27,28 +26,32 @@ def drop_useless(df, axis=0):
 
 
 def model():
-    return ensemble.BaggingRegressor(base_estimator=tree.DecisionTreeRegressor(max_depth=2), n_estimators=150, bootstrap=True)
+    return ensemble.GradientBoostingRegressor(max_depth=6, learning_rate=0.1)
 
 
 datas = ds.read_dataset("mean_var_on_customers_from_tain.csv")
+datas['Month'] = datas['Date']
+datas['Month'] = datas['Month'].apply(lambda x: x.split("-")[1])
 train = utils.get_frame_in_range(datas, 3, 2016, 12, 2017)
 test = utils.get_frame_in_range(datas, 1, 2018, 2, 2018)
-regions_n = 11
 poly = PolynomialFeatures(degree=1)
 sum = 0
-models = []
-for i in range(regions_n):
-    print("REG " + str(i))
-    d_reg = utils.get_frames_per_region(train, i)
-    d_reg_t = utils.get_frames_per_region(test, i)
+types = ['AssortmentType_General', 'AssortmentType_With Fish Department', 'AssortmentType_With Non-Food Department']
+models = {}
+for i in types:
+    print("TYPE " + str(i))
+    d_reg = utils.get_frames_per_assortmenttype(train, i)
+    d_reg_t = utils.get_frames_per_assortmenttype(test, i)
     print("N_SAMPLES: ", len(d_reg) + len(d_reg_t))
+    if len(d_reg) == 0:
+        continue
     y = prepare_out(d_reg)
     x = drop_useless(d_reg, 1)
     y_t = prepare_out(d_reg_t)
     x_t = drop_useless(d_reg_t, 1)
     mod = skc.LinearSklearn(1, model)
     mod.train(x, y)
-    models.append(mod)
+    models[i] = mod
     p = mod.predict(x).squeeze()
     pt = mod.predict(x_t).squeeze()
     r2_t = eval.r2_score(y_t, pt)
@@ -62,9 +65,12 @@ print("AVG TEST R2: ", sum/len(datas))
 custpred = []
 for i in test.index.tolist():
     row = test.loc[i]
-    reg = row['Region']
+    val = ""
+    for t in types:
+        if row[t] == 1:
+            val = t
     row = drop_useless(row).reshape([1, -1])
-    custpred.append(models[reg].predict(row).squeeze())
+    custpred.append(models[val].predict(row).squeeze())
 
 custpred = np.array(custpred)
 

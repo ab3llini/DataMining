@@ -58,5 +58,21 @@ def get_frames_per_region(df, reg):
     return df[df['Region'] == reg]
 
 
+def exclude_region(df, reg):
+    return df[df['Region'] != reg]
+
+
 def get_frames_per_shop(df, id):
     return df[df['StoreID'] == id]
+
+
+def get_frames_per_storetype(df, id):
+    return df[df[id] == 1]
+
+
+def exclude_storetype(df, id):
+    return df[df[id] != 1]
+
+def get_frames_per_assortmenttype(df, id):
+    return df[df[id] == 1]
+

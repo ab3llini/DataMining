@@ -7,7 +7,6 @@ import dataset.utility as utils
 from sklearn import linear_model
 from sklearn import ensemble
 from sklearn import pipeline
-from sklearn import tree
 import numpy as np
 import pandas
 import models.sklearn.sklearnlinearclass as skc
@@ -27,20 +26,20 @@ def drop_useless(df, axis=0):
 
 
 def model():
-    return ensemble.BaggingRegressor(base_estimator=tree.DecisionTreeRegressor(max_depth=2), n_estimators=150, bootstrap=True)
+    return ensemble.AdaBoostRegressor(learning_rate=1, loss='exponential')
 
 
 datas = ds.read_dataset("mean_var_on_customers_from_tain.csv")
 train = utils.get_frame_in_range(datas, 3, 2016, 12, 2017)
 test = utils.get_frame_in_range(datas, 1, 2018, 2, 2018)
-regions_n = 11
 poly = PolynomialFeatures(degree=1)
 sum = 0
-models = []
-for i in range(regions_n):
-    print("REG " + str(i))
-    d_reg = utils.get_frames_per_region(train, i)
-    d_reg_t = utils.get_frames_per_region(test, i)
+types = ['StoreType_Hyper Market', 'StoreType_Super Market', 'StoreType_Standard Market', 'StoreType_Shopping Center']
+models = {}
+for i in types:
+    print("TYPE " + str(i))
+    d_reg = utils.get_frames_per_storetype(train, i)
+    d_reg_t = utils.get_frames_per_storetype(test, i)
     print("N_SAMPLES: ", len(d_reg) + len(d_reg_t))
     y = prepare_out(d_reg)
     x = drop_useless(d_reg, 1)
@@ -48,7 +47,7 @@ for i in range(regions_n):
     x_t = drop_useless(d_reg_t, 1)
     mod = skc.LinearSklearn(1, model)
     mod.train(x, y)
-    models.append(mod)
+    models[i] = mod
     p = mod.predict(x).squeeze()
     pt = mod.predict(x_t).squeeze()
     r2_t = eval.r2_score(y_t, pt)
@@ -62,9 +61,12 @@ print("AVG TEST R2: ", sum/len(datas))
 custpred = []
 for i in test.index.tolist():
     row = test.loc[i]
-    reg = row['Region']
+    val = ""
+    for t in types:
+        if row[t] == 1:
+            val = t
     row = drop_useless(row).reshape([1, -1])
-    custpred.append(models[reg].predict(row).squeeze())
+    custpred.append(models[val].predict(row).squeeze())
 
 custpred = np.array(custpred)
 
