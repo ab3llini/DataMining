@@ -21,10 +21,10 @@ def prepare_out(df):
 
 
 def drop_useless(df, axis=0):
-    dropped = df.drop(['NumberOfSales', 'StoreID', 'Date', 'IsOpen', 'CloudCover',
-                            'Max_Sea_Level_PressurehPa', 'WindDirDegrees', 'Max_Dew_PointC',
-                            'NumberOfCustomers', 'Day', 'Mean_Sea_Level_PressurehPa',
-                            'Min_Sea_Level_PressurehPa', 'Region', 'Month'], axis=axis)
+    dropped = df.drop(['NumberOfSales', 'Max_Humidity', 'Max_Sea_Level_PressurehPa', 'Max_TemperatureC',
+                 'Max_VisibilityKm', 'Max_Wind_SpeedKm_h', 'Mean_Humidity', 'Mean_Sea_Level_PressurehPa',
+                 'Mean_VisibilityKm', 'Mean_Wind_SpeedKm_h', 'Min_Dew_PointC',
+                 'Min_Humidity', 'Min_Sea_Level_PressurehPa', 'Min_TemperatureC', 'Min_VisibilitykM'], axis=axis)
     #print(list(dropped))
     x = ds.to_numpy(dropped)
     return x
@@ -35,13 +35,10 @@ def model():
 
 
 if __name__ == '__main__':
-    datas = ds.read_dataset("mean_var_on_customers_from_tain.csv")
-    datas['Month'] = datas['Date']
-    datas['Month'] = datas['Month'].apply(lambda x: x.split("-")[1])
-    datas = imp.one_hot_numeric(datas, 'Month', 'Month_')
-    datas = imp.one_hot_numeric(datas, 'Region', 'Region_')
-    datas = preprocessing_utils.mean_cust_per_month_per_region(datas, utils.get_frame_in_range(datas, 3, 2016, 12, 2017))
-    datas = sb.SetBuilder(target='NumberOfCustomers', autoexclude=True, df=datas).exclude('NumberOfSales', 'Month').build()
+    datas = ds.read_dataset("best_for_customers.csv")
+    datas = sb.SetBuilder(target='NumberOfCustomers', autoexclude=True, df=datas)\
+        .exclude('NumberOfSales', 'Month')\
+        .build()
     n = 10
     mods = []
     for i in range(n):
@@ -67,4 +64,4 @@ if __name__ == '__main__':
 
     new = pandas.DataFrame()
     new['NumberOfCustomers'] = pandas.Series(custpred)
-    ds.save_dataset(new, "cust_ensemble_predictions6.csv")
+    ds.save_dataset(new, "cust_ensemble_predictions7.csv")
