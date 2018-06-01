@@ -15,12 +15,15 @@ class Bagging:
 
         self.count = count
         self.predictions = []
+        self.training_predictions = []
         self.description = ""
         self.final_predictions = []
+        self.final_training_predictions = []
 
     def compute_final_predictions(self):
         print("Computing average predictions for bagging on customers..")
         self.final_predictions = np.array(self.predictions).mean(axis=0)
+        self.final_training_predictions = np.array(self.training_predictions).mean(axis=0)
 
     def save_partial(self, model, it):
         model_name = "%s_bagging_partial_%s" % (self.description, it)
@@ -61,6 +64,8 @@ class SalesModel(Bagging):
             curr.fit(x_sampled, y_sampled)
             tr_predictions = curr.predict(self.training_ds.xtr)
 
+            self.training_predictions.append(tr_predictions)
+
             print("Model %s :: Sales R2 on training set: %s" % (i, eval.r2_score(self.training_ds.ytr, tr_predictions)))
 
             ts_predictions = curr.predict(self.testing_ds.xts)
@@ -72,7 +77,7 @@ class SalesModel(Bagging):
 
         self.compute_final_predictions()
 
-        print("Overall sales R2 on training set: %s" % eval.r2_score(self.training_ds.ytr, self.final_predictions))
+        print("Overall sales R2 on training set: %s" % eval.r2_score(self.training_ds.ytr, self.final_training_predictions))
 
         print("Done with sales bagging, models have been saved in 'saved' dir.")
         print("When ready, execute save_predictions.")
@@ -119,6 +124,8 @@ class CustomerModel(Bagging):
             curr.train(x_sampled, y_sampled)
             tr_predictions = curr.predict(x_sampled).squeeze()
 
+            self.training_predictions.append(tr_predictions)
+
             print("Model %s :: Customer R2 on training set: %s" % (i, eval.r2_score(y_sampled, tr_predictions)))
 
             ts_predictions = curr.predict(self.testing_ds.xts)
@@ -130,7 +137,7 @@ class CustomerModel(Bagging):
 
         self.compute_final_predictions()
 
-        print("Overall customer R2 on training set: %s" % eval.r2_score(self.training_ds.ytr, self.final_predictions))
+        print("Overall customer R2 on training set: %s" % eval.r2_score(self.training_ds.ytr, self.final_training_predictions))
 
         print("Done with customer bagging, models have been saved in 'saved' dir.")
         print("When ready, execute save_predictions.")
