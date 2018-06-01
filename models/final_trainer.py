@@ -19,7 +19,7 @@ class Bagging:
         self.final_predictions = []
 
     def compute_final_predictions(self):
-        print("Computing average predictions for bagging on customers")
+        print("Computing average predictions for bagging on customers..")
         self.final_predictions = np.array(self.predictions).mean(axis=0)
 
     def save_partial(self, model, it):
@@ -71,6 +71,8 @@ class SalesModel(Bagging):
             self.save_partial(curr, i)
 
         self.compute_final_predictions()
+
+        print("Overall sales R2 on training set: %s" % eval.r2_score(self.training_ds.ytr, self.final_predictions))
 
         print("Done with sales bagging, models have been saved in 'saved' dir.")
         print("When ready, execute save_predictions.")
@@ -128,6 +130,8 @@ class CustomerModel(Bagging):
 
         self.compute_final_predictions()
 
+        print("Overall customer R2 on training set: %s" % eval.r2_score(self.training_ds.ytr, self.final_predictions))
+
         print("Done with customer bagging, models have been saved in 'saved' dir.")
         print("When ready, execute save_predictions.")
 
@@ -163,8 +167,8 @@ print("******* Beginning final training & prediction")
 csv_cust = "final_customer_predictions.csv"
 csv_sales = "final_sales_predictions.csv"
 
-bagging_count_cust = 2
-bagging_count_sales = 2
+bagging_count_cust = 10
+bagging_count_sales = 10
 
 
 # Stage 1 : Customer prediction

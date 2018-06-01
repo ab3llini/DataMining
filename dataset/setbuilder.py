@@ -76,7 +76,7 @@ class SetBuilder:
         sample_xtr = [self.xtr[i] for i in idxs]
         sample_ytr = [self.ytr[i] for i in idxs]
 
-        print('Done.\nTraining set has %s samples\nTesting set has %s samples' % (len(self.ytr), len(self.yts)))
+        print('Random sampling returned %s samples' % len(sample_ytr))
 
         return np.array(sample_xtr), np.array(sample_ytr)
 
@@ -100,7 +100,9 @@ class SetBuilder:
         self.xtr = ds_util.get_frame_in_range(self.frame, self.split[0], self.split[1], self.split[2], self.split[3])
         self.xts = ds_util.get_frame_in_range(self.frame, self.split[4], self.split[5], self.split[6], self.split[7])
 
-        self.xtr = ds_handler.to_numpy(self.xtr.drop(columns=['Date', self.target]))
+        self.xtr = self.xtr.drop(columns=['Date', self.target])
+
+        self.xtr = ds_handler.to_numpy(self.xtr)
         self.xts = ds_handler.to_numpy(self.xts.drop(columns=['Date', self.target]))
 
         self.ytr = ds_util.get_frame_in_range(self.frame, self.split[0], self.split[1], self.split[2], self.split[3])
@@ -109,7 +111,6 @@ class SetBuilder:
         self.yts = ds_util.get_frame_in_range(self.frame, self.split[4], self.split[5], self.split[6], self.split[7])
         self.yts = ds_handler.to_numpy(self.yts[[self.target]])
 
-        print('Done.\nTraining set has %s samples\nTesting set has %s samples'
-              % (len(self.ytr), len(self.yts)))
+        print('Setbuilder: #xtr = %s, #ytr = %s, #xts = %s, #yts = %s' % (len(self.xtr), len(self.ytr), len(self.xts), len(self.yts)))
 
         return self
