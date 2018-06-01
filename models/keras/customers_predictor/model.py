@@ -61,3 +61,12 @@ def simple_sequential(num, last_relu=True):
     else:
         x = klayers.Dense(units=1, activation='linear', use_bias=True)(x)
     return k.Model(inputs=inputs, outputs=x)
+
+
+def single_relu(num, last_relu=True):
+    inputs = klayers.Input(shape=(num,))
+    if last_relu:
+        x = klayers.Dense(units=1, activation='relu', use_bias=True)(inputs)
+    else:
+        x = klayers.Dense(units=1, activation='linear', use_bias=True)(inputs)
+    return k.Model(inputs=inputs, outputs=x)

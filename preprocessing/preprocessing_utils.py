@@ -333,6 +333,60 @@ def mean_cust_per_month_per_shop(df, data_from=None):
     return df
 
 
+def mean_cust_per_shop_if_promotions(df, data_from=None):
+    if data_from is None:
+        data_from = df
+    df['MeanCustPerShopIfPromotions'] = p.Series(np.zeros(len(df)), df.index)
+    means = dict()
+    num = dict()
+    for i in data_from.index.tolist():
+        prom = d.content_of(data_from, 'HasPromotions', i)
+        reg = d.content_of(data_from, 'StoreID', i)
+        index = str(reg)
+        val = d.content_of(data_from, 'NumberOfCustomers', i)
+        if prom != 0:
+            try:
+                means[index] += val
+                num[index] += 1
+            except KeyError:
+                means[index] = val
+                num[index] = 1
+    for i in df.index.tolist():
+        prom = d.content_of(df, 'HasPromotions', i)
+        reg = d.content_of(df, 'StoreID', i)
+        if prom != 0:
+            index = str(reg)
+            df.set_value(i, 'MeanCustPerShopIfPromotions', means[index]/num[index])
+    return df
+
+
+def mean_cust_per_shop_if_holiday(df, data_from=None):
+    if data_from is None:
+        data_from = df
+    df['MeanCustPerShopIfHoliday'] = p.Series(np.zeros(len(df)), df.index)
+    means = dict()
+    num = dict()
+    for i in data_from.index.tolist():
+        prom = d.content_of(data_from, 'IsHoliday', i)
+        reg = d.content_of(data_from, 'StoreID', i)
+        index = str(reg)
+        val = d.content_of(data_from, 'NumberOfCustomers', i)
+        if prom != 0:
+            try:
+                means[index] += val
+                num[index] += 1
+            except KeyError:
+                means[index] = val
+                num[index] = 1
+    for i in df.index.tolist():
+        prom = d.content_of(df, 'IsHoliday', i)
+        reg = d.content_of(df, 'StoreID', i)
+        if prom != 0:
+            index = str(reg)
+            df.set_value(i, 'MeanCustPerShopIfHoliday', means[index]/num[index])
+    return df
+
+
 def mean_sales_per_month_per_shop(df, data_from=None):
     if data_from is None:
         data_from = df
