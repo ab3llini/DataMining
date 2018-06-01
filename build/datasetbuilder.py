@@ -127,7 +127,7 @@ def create_all_finals():
 
 
 if __name__ == '__main__':
-     # create_all_finals()
+     create_all_finals()
      attrs_sal_tr = list(d.read_dataset("final_for_sales_train.csv"))
      attrs_cus_tr = list(d.read_dataset("final_for_customer_train.csv"))
      pre_u.reorder_datas_cols("final_for_sales_test.csv", attrs_sal_tr, "final_for_sales_test_r.csv")
