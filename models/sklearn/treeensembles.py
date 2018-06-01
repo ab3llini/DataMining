@@ -1,3 +1,5 @@
+from sklearn.linear_model import Ridge
+
 import dataset.setbuilder as sb
 import models.sklearn.evaluator as eval
 import evaluation.evaluation as ev_cust
