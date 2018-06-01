@@ -44,7 +44,7 @@ def barplot(df, x, y, hue=None):
     plt.show()
 
 
-def monthlyplot(df, bm=3, by=2016, em=2, ey=2018, regions=None, storetype=False, target="NumberOfSales"):
+def monthlyplot(df, bm=3, by=2016, em=2, ey=2018, regions=None, storetype=False, target="NumberOfSales", show=True, save=False):
     if em == 12:
         em = 1
         ey += 1
@@ -119,10 +119,14 @@ def monthlyplot(df, bm=3, by=2016, em=2, ey=2018, regions=None, storetype=False,
         sb.pointplot(x="Month", y=target, data=pdf, hue="Region")
 
     plt.legend()
-    plt.show()
+
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("monthly_plot.png")
 
 
-def opendaybeforegeneralplot(df, storeID):
+def opendaybeforegeneralplot(df, storeID, show=True, save=False):
     IsOpenList = list(to_numpy(df["IsOpen"]).squeeze())
     IsOpenList.pop()
     IsOpenList.insert(0, 1)
@@ -131,10 +135,14 @@ def opendaybeforegeneralplot(df, storeID):
     dftoplotpershop = dftoplot[dftoplot["StoreID"] == storeID]
     dftoplotpershop = dftoplot[dftoplot["IsOpen"] == 1]
     sb.boxplot(x="OpenDayBefore", y="NumberOfSales", data=dftoplotpershop).set_title("Sales / Shop Availability")
-    plt.show()
+
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("opendaybeforegeneralplot.png")
 
 
-def opendaybeforeonweekplot(df, storeID):
+def opendaybeforeonweekplot(df, storeID, show=True, save=False):
     df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
     df['Day'] = df['Date'].dt.weekday_name
     df = df.drop(df[df["Day"] == "Sunday"].index)
@@ -146,27 +154,35 @@ def opendaybeforeonweekplot(df, storeID):
     dftoplotpershop = dftoplot[dftoplot["StoreID"] == storeID]
     dftoplotpershop = dftoplot[dftoplot["IsOpen"] == 1]
     sb.boxplot(x="OpenDayBefore", y="NumberOfSales", data=dftoplotpershop).set_title("Sales / Shop Availability (-Sun)")
-    plt.show()
+
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("opendaybeforeonweekplot.png")
 
 
 # If storeID = 0, ignore shop selection.
-def competitorplot(df, target="NumberOfSales"):
+def competitorplot(df, target="NumberOfSales", show=True, save=False):
     title = target + " / Nearest Competitor"
     sb.barplot(x="NearestCompetitor", y=target, data=df).set_title(title)
-    plt.show()
+
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("competitorplot.png")
 
 
-def frequencypershop(df, storeID, target="NumberOfSales", daily=False, shoptype=False, cloudcover=False, events=False, region=False):
+def frequencypershop(df, storeID, target="NumberOfSales", daily=False, shoptype=False, cloudcover=False, events=False, region=False, show=True, save=False):
     title = target + " Distribution"
-    if daily:
-        df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
-        df['Day'] = df['Date'].dt.weekday_name
 
-    if storeID != 0:
+    if storeID > 0:
         df = df[df["StoreID"] == storeID]
         title = title + " - Shop" + str(storeID)
 
     if daily:
+        df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+        df['Day'] = df['Date'].dt.weekday_name
+
         sb.distplot(a=df[df["Day"] == "Monday"][target], label="Monday").set_title(title)
         sb.distplot(a=df[df["Day"] == "Tuesday"][target], label="Tuesday").set_title(title)
         sb.distplot(a=df[df["Day"] == "Wednesday"][target], label="Wednesday").set_title(title)
@@ -215,11 +231,25 @@ def frequencypershop(df, storeID, target="NumberOfSales", daily=False, shoptype=
         plt.legend()
 
     else:
-        sb.distplot(a=df[target]).set_title(title)
-    plt.show()
+        if storeID == -1:
+            sb.boxplot(x="StoreID", y=target, data=df).set_title(title)
+            plt.legend()
+        elif storeID == -2:
+            df = df[df["StoreType_Hyper Market"] == 1]
+            for id in values_of(df, "StoreID"):
+                sb.distplot(a=df[df["StoreID"] == id][target], hist=False).set_title(title)
+                print(id)
+            plt.legend()
+        else:
+            sb.distplot(a=df[target]).set_title(title)
+
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("frequencypershop.png")
 
 
-def availabilityplot(df):
+def availabilityplot(df, show=True, save=False):
     title = "Availability Distribution Per Day"
     df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
     df['Day'] = df['Date'].dt.weekday_name
@@ -233,31 +263,93 @@ def availabilityplot(df):
     sb.distplot(a=df[df["Day"] == "Sunday"]["IsOpen"], label="Sunday").set_title(title)
 
     plt.legend()
-    plt.show()
+
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("availabilityplot.png")
 
 
-def scattertargets(df, hue):
+def scattertargets(df, hue=None, show=True, save=False):
     if hue == "Day":
         df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
         df['Day'] = df['Date'].dt.weekday_name
 
     sb.lmplot(x="NumberOfCustomers", y="NumberOfSales", data=df, hue=hue)
-    plt.show()
+
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("scattertargets.png")
 
 
-def cloudcoverbarplot(df, target="NumberOfSales"):
+def cloudcoverbarplot(df, target="NumberOfSales", show=True, save=False):
     sb.barplot(x="CloudCover", y=target, data=df).set_title(target + "Per CloudCover (All shops)")
-    plt.show()
+
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("cloudcoverbarplot.png")
 
 
-def frequencystatplot(df):
+def frequencystatplot(df, show=True, save=False):
     regions = [0,1,2,3,4,5,6,7,8,9,10]
     compstat = []
     for i in regions:
         compstat.append(len(values_of(df[df["Region"] == i], "StoreID")))
 
     sb.barplot(x=regions, y=compstat)
-    plt.show()
+
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("frequencystatplot.png")
+
+
+def promotionplot(df, target="NumberOfSales", show=True, save=False):
+    title = target + "/ Promotion"
+    sb.boxplot(x="HasPromotions", y=target, data=df[df["StoreType_Hyper Market"] == 1]).set_title(title + " in Hyper Market")
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("promotionplot.png")
+    sb.boxplot(x="HasPromotions", y=target, data=df[df["StoreType_Super Market"] == 1]).set_title(title + " in Super Market")
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("promotionplot.png")
+    sb.boxplot(x="HasPromotions", y=target, data=df[df["StoreType_Standard Market"] == 1]).set_title(title + " in Standard Market")
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("promotionplot.png")
+    sb.boxplot(x="HasPromotions", y=target, data=df[df["StoreType_Shopping Center"] == 1]).set_title(title + " in Shopping Center")
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("promotionplot.png")
+
+
+def holidayplot(df, target="NumberOfSales", show=True, save=False):
+    title = target + "/ IsHoliday"
+    df = df[df["StoreType_Hyper Market"]==1]
+    sb.boxplot(x="IsHoliday", y=target, data=df[df[target] != 0]).set_title(title)
+
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("holidayplot.png")
+
+
+def meanstdscatterpershop(show=True, save=False):
+    df = ds.read_dataset("best_for_customers.csv")
+    sb.lmplot(x="meancustshop", y="meancust_std_shop", data=df)
+    plt.savefig("plot.png")
+
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("meanstdscatterpershop.png")
 
 
 
