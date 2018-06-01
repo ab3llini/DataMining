@@ -122,11 +122,11 @@ class CustomerModel(Bagging):
             x_sampled, y_sampled = self.training_ds.random_sampling(1.0)
             curr = skc.LinearSklearn(1, CustomerModel.model)
             curr.train(x_sampled, y_sampled)
-            tr_predictions = curr.predict(x_sampled).squeeze()
+            tr_predictions = curr.predict(self.training_ds.xtr).squeeze()
 
             self.training_predictions.append(tr_predictions)
 
-            print("Model %s :: Customer R2 on training set: %s" % (i, eval.r2_score(y_sampled, tr_predictions)))
+            print("Model %s :: Customer R2 on training set: %s" % (i, eval.r2_score(self.training_ds.ytr, tr_predictions)))
 
             ts_predictions = curr.predict(self.testing_ds.xts)
             self.predictions.append(ts_predictions)
