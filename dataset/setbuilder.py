@@ -24,7 +24,7 @@ class SetBuilder:
     # Can pass a different training/testing split tuple
     # If default is set to false no attributes are excluded
     # Provide only one target, default is nr of sales
-    def __init__(self, split=(3, 2016, 12, 2017, 1, 2018, 2, 2018), df=None, autoexclude=False, target='NumberOfSales', dataset='mean_var_pre_imputed_per_day.csv'):
+    def __init__(self, split=(3, 2016, 12, 2017, 1, 2018, 2, 2018), df=None, autoexclude=False, target='NumberOfSales', dataset='best_for_customers.csv'):
 
         self.split = split
 

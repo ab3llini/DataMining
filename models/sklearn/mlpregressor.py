@@ -20,16 +20,16 @@ import pandas as pd
 
 
 # Build training & test sets
-data = sb.SetBuilder(target='NumberOfCustomers').exclude('NumberOfSales').exclude('Day').build()
+data = sb.SetBuilder(target='NumberOfCustomers', autoexclude=True).exclude('NumberOfSales', 'Month').build()
 #data = sb.SetBuilder(target='NumberOfSales').exclude('Day').build()
 
 nn = neural_network.MLPRegressor(
-    hidden_layer_sizes=(80,5),
+    hidden_layer_sizes=(100,5),
     activation='relu',
     solver='adam',
     batch_size='auto',
     learning_rate='adaptive',
-    learning_rate_init=0.01,
+    learning_rate_init=0.001,
     max_iter=50,
     shuffle=True,
     random_state=9,
