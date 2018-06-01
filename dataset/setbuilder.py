@@ -5,19 +5,6 @@ import numpy as np
 import preprocessing.preprocessing_utils as preprocessing
 
 # Note that the set builder will auto exclude the target, there is no need to insert it here
-default_excluded = [
-                'StoreID',
-                'Date',
-                'IsOpen',
-                'Region',
-                'CloudCover',
-                'Max_Sea_Level_PressurehPa',
-                'WindDirDegrees',
-                'Max_Dew_PointC',
-                'Mean_Sea_Level_PressurehPa',
-                'Min_Sea_Level_PressurehPa',
-                'Day'
-            ]
 
 class SetBuilder:
 
@@ -25,6 +12,9 @@ class SetBuilder:
     # If default is set to false no attributes are excluded
     # Provide only one target, default is nr of sales
     def __init__(self, split=(3, 2016, 12, 2017, 1, 2018, 2, 2018), df=None, autoexclude=False, target='NumberOfSales', dataset='best_for_customers.csv'):
+
+        self.default_excluded = ['StoreID', 'Date', 'IsOpen', 'Region', 'CloudCover', 'Max_Sea_Level_PressurehPa',
+            'WindDirDegrees', 'Max_Dew_PointC', 'Mean_Sea_Level_PressurehPa', 'Min_Sea_Level_PressurehPa', 'Day']
 
         self.split = split
 
@@ -47,7 +37,7 @@ class SetBuilder:
                 print("Important: autoexclude is ON, program might crash when accessing non existing attributes")
 
         if autoexclude:
-            self.excluded = default_excluded
+            self.excluded = self.default_excluded
         else:
             self.excluded = []
 
@@ -89,8 +79,6 @@ class SetBuilder:
         print('Done.\nTraining set has %s samples\nTesting set has %s samples' % (len(self.ytr), len(self.yts)))
 
         return np.array(sample_xtr), np.array(sample_ytr)
-
-
 
     def build(self):
 
