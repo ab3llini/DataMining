@@ -283,6 +283,106 @@ def mean_std_sales_per_shop_per_day(df, data_from=None):
     return df
 
 
+def mean_cust_per_month_per_region(df, data_from=None):
+    if data_from is None:
+        data_from = df
+    df['MeanCustPerRegionPerMonth'] = p.Series(np.zeros(len(df)), df.index)
+    means = dict()
+    num = dict()
+    for i in data_from.index.tolist():
+        month = d.content_of(data_from, 'Month', i)
+        reg = d.content_of(data_from, 'Region', i)
+        index = str(month) + "_" + str(reg)
+        val = d.content_of(data_from, 'NumberOfCustomers', i)
+        try:
+            means[index] += val
+            num[index] += 1
+        except KeyError:
+            means[index] = val
+            num[index] = 1
+    for i in df.index.tolist():
+        month = d.content_of(df, 'Month', i)
+        reg = d.content_of(df, 'Region', i)
+        index = str(month) + "_" + str(reg)
+        df.set_value(i, 'MeanCustPerRegionPerMonth', means[index]/num[index])
+    return df
+
+
+def mean_cust_per_month_per_shop(df, data_from=None):
+    if data_from is None:
+        data_from = df
+    df['MeanCustPerShopPerMonth'] = p.Series(np.zeros(len(df)), df.index)
+    means = dict()
+    num = dict()
+    for i in data_from.index.tolist():
+        month = d.content_of(data_from, 'Month', i)
+        reg = d.content_of(data_from, 'StoreID', i)
+        index = str(month) + "_" + str(reg)
+        val = d.content_of(data_from, 'NumberOfCustomers', i)
+        try:
+            means[index] += val
+            num[index] += 1
+        except KeyError:
+            means[index] = val
+            num[index] = 1
+    for i in df.index.tolist():
+        month = d.content_of(df, 'Month', i)
+        reg = d.content_of(df, 'StoreID', i)
+        index = str(month) + "_" + str(reg)
+        df.set_value(i, 'MeanCustPerShopPerMonth', means[index]/num[index])
+    return df
+
+
+def mean_sales_per_month_per_shop(df, data_from=None):
+    if data_from is None:
+        data_from = df
+    df['MeanSalesPerShopPerMonth'] = p.Series(np.zeros(len(df)), df.index)
+    means = dict()
+    num = dict()
+    for i in data_from.index.tolist():
+        month = d.content_of(data_from, 'Month', i)
+        reg = d.content_of(data_from, 'StoreID', i)
+        index = str(month) + "_" + str(reg)
+        val = d.content_of(data_from, 'NumberOfSales', i)
+        try:
+            means[index] += val
+            num[index] += 1
+        except KeyError:
+            means[index] = val
+            num[index] = 1
+    for i in df.index.tolist():
+        month = d.content_of(df, 'Month', i)
+        reg = d.content_of(df, 'StoreID', i)
+        index = str(month) + "_" + str(reg)
+        df.set_value(i, 'MeanSalesPerShopPerMonth', means[index]/num[index])
+    return df
+
+
+def mean_sales_per_month_per_region(df, data_from=None):
+    if data_from is None:
+        data_from = df
+    df['MeanSalesPerRegionPerMonth'] = p.Series(np.zeros(len(df)), df.index)
+    means = dict()
+    num = dict()
+    for i in data_from.index.tolist():
+        month = d.content_of(data_from, 'Month', i)
+        reg = d.content_of(data_from, 'Region', i)
+        index = str(month) + "_" + str(reg)
+        val = d.content_of(data_from, 'NumberOfSales', i)
+        try:
+            means[index] += val
+            num[index] += 1
+        except KeyError:
+            means[index] = val
+            num[index] = 1
+    for i in df.index.tolist():
+        month = d.content_of(df, 'Month', i)
+        reg = d.content_of(df, 'Region', i)
+        index = str(month) + "_" + str(reg)
+        df.set_value(i, 'MeanSalesPerRegionPerMonth', means[index]/num[index])
+    return df
+
+
 def add_mean_std_per_shop_per_day(ds):
     ds['Date'] = p.to_datetime(ds['Date'], format='%d/%m/%Y')
     ds['Day'] = ds['Date'].dt.weekday_name

@@ -19,8 +19,10 @@ def r2(df, preds, attr):
 
 def region_error(real, pred, regions, shop_ids, dates):
     months = np.unique(np.array([date.split("-")[1] for date in dates]))
+    months = sorted(list(months))
     monthsmap = map_values_pos(months)
     shops = np.unique(shop_ids)
+    shops = sorted(list(shops))
     shopsmap = map_values_pos(shops)
     regionsunique = np.unique(regions)
     regionsmap = map_values_pos(regionsunique)

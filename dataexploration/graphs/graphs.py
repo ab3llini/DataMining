@@ -352,11 +352,14 @@ def meanstdscatterpershop(show=True, save=False):
         plt.savefig("meanstdscatterpershop.png")
 
 
+
+
 if __name__ == '__main__':
     import dataset.dataset as d
     import dataset.utility as utils
     import pandas as pd
     ds = d.read_imputed_onehot_dataset()
+    monthlyplot(ds)
     y = 2016
     m = 3
     while y != 2018 or m != 3:

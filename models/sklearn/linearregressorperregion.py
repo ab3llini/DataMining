@@ -6,6 +6,8 @@ import dataset.dataset as ds
 import dataset.utility as utils
 from sklearn import linear_model
 from sklearn import ensemble
+from sklearn import pipeline
+from sklearn import tree
 import numpy as np
 import pandas
 import models.sklearn.sklearnlinearclass as skc
@@ -25,8 +27,7 @@ def drop_useless(df, axis=0):
 
 
 def model():
-    return ensemble.gradient_boosting.GradientBoostingRegressor(loss='lad', max_depth=3, criterion='mse',
-                                                                learning_rate=0.2)
+    return ensemble.BaggingRegressor(base_estimator=tree.DecisionTreeRegressor(max_depth=2), n_estimators=150, bootstrap=True)
 
 
 datas = ds.read_dataset("mean_var_on_customers_from_tain.csv")
