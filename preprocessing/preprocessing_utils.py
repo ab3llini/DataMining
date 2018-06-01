@@ -290,7 +290,7 @@ def mean_cust_per_month_per_region(df, data_from=None):
     means = dict()
     num = dict()
     for i in data_from.index.tolist():
-        month = d.content_of(data_from, 'Month', i)
+        month = int(d.content_of(data_from, 'Month', i))
         reg = d.content_of(data_from, 'Region', i)
         index = str(month) + "_" + str(reg)
         val = d.content_of(data_from, 'NumberOfCustomers', i)
@@ -301,7 +301,7 @@ def mean_cust_per_month_per_region(df, data_from=None):
             means[index] = val
             num[index] = 1
     for i in df.index.tolist():
-        month = d.content_of(df, 'Month', i)
+        month = int(d.content_of(df, 'Month', i))
         reg = d.content_of(df, 'Region', i)
         index = str(month) + "_" + str(reg)
         df.set_value(i, 'MeanCustPerRegionPerMonth', means[index]/num[index])
@@ -315,7 +315,7 @@ def mean_cust_per_month_per_shop(df, data_from=None):
     means = dict()
     num = dict()
     for i in data_from.index.tolist():
-        month = d.content_of(data_from, 'Month', i)
+        month = int(d.content_of(data_from, 'Month', i))
         reg = d.content_of(data_from, 'StoreID', i)
         index = str(month) + "_" + str(reg)
         val = d.content_of(data_from, 'NumberOfCustomers', i)
@@ -326,7 +326,7 @@ def mean_cust_per_month_per_shop(df, data_from=None):
             means[index] = val
             num[index] = 1
     for i in df.index.tolist():
-        month = d.content_of(df, 'Month', i)
+        month = int(d.content_of(df, 'Month', i))
         reg = d.content_of(df, 'StoreID', i)
         index = str(month) + "_" + str(reg)
         df.set_value(i, 'MeanCustPerShopPerMonth', means[index]/num[index])
@@ -394,7 +394,7 @@ def mean_sales_per_month_per_shop(df, data_from=None):
     means = dict()
     num = dict()
     for i in data_from.index.tolist():
-        month = d.content_of(data_from, 'Month', i)
+        month = int(d.content_of(data_from, 'Month', i))
         reg = d.content_of(data_from, 'StoreID', i)
         index = str(month) + "_" + str(reg)
         val = d.content_of(data_from, 'NumberOfSales', i)
@@ -405,7 +405,7 @@ def mean_sales_per_month_per_shop(df, data_from=None):
             means[index] = val
             num[index] = 1
     for i in df.index.tolist():
-        month = d.content_of(df, 'Month', i)
+        month = int(d.content_of(df, 'Month', i))
         reg = d.content_of(df, 'StoreID', i)
         index = str(month) + "_" + str(reg)
         df.set_value(i, 'MeanSalesPerShopPerMonth', means[index]/num[index])
@@ -419,7 +419,7 @@ def mean_sales_per_month_per_region(df, data_from=None):
     means = dict()
     num = dict()
     for i in data_from.index.tolist():
-        month = d.content_of(data_from, 'Month', i)
+        month = int(d.content_of(data_from, 'Month', i))
         reg = d.content_of(data_from, 'Region', i)
         index = str(month) + "_" + str(reg)
         val = d.content_of(data_from, 'NumberOfSales', i)
@@ -430,7 +430,7 @@ def mean_sales_per_month_per_region(df, data_from=None):
             means[index] = val
             num[index] = 1
     for i in df.index.tolist():
-        month = d.content_of(df, 'Month', i)
+        month = int(d.content_of(df, 'Month', i))
         reg = d.content_of(df, 'Region', i)
         index = str(month) + "_" + str(reg)
         df.set_value(i, 'MeanSalesPerRegionPerMonth', means[index]/num[index])
@@ -505,17 +505,7 @@ def longstring_tolist(string):
     return string.split(",")
 
 
-def reorder_test_datas_for_cust_pred():
-    datas = d.read_dataset("test_dataset_for_customers_prediction.csv")
-    datas = reorder_attributes(datas, longstring_tolist("StoreID,Date,IsHoliday,IsOpen,HasPromotions,NearestCompetitor,Region,NumberOfCustomers,NumberOfSales,Region_AreaKM2,Region_GDP,Region_PopulationK,CloudCover,Max_Dew_PointC,Max_Humidity,Max_Sea_Level_PressurehPa,Max_TemperatureC,Max_VisibilityKm,Max_Wind_SpeedKm_h,Mean_Dew_PointC,Mean_Humidity,Mean_Sea_Level_PressurehPa,Mean_TemperatureC,Mean_VisibilityKm,Mean_Wind_SpeedKm_h,Min_Dew_PointC,Min_Humidity,Min_Sea_Level_PressurehPa,Min_TemperatureC,Min_VisibilitykM,Precipitationmm,WindDirDegrees,Events_Rain,Events_Snow,Events_none,Events_Fog,Events_Thunderstorm,Events_Hail,StoreType_Hyper Market,StoreType_Super Market,StoreType_Standard Market,StoreType_Shopping Center,AssortmentType_General,AssortmentType_With Non-Food Department,AssortmentType_With Fish Department,Day,Day_Tuesday,Day_Wednesday,Day_Friday,Day_Saturday,Day_Sunday,Day_Monday,Day_Thursday,MeanCustPerShopPerDay,StdCustPerShopPerDay,meancustshop,meancust_std_shop,maxcust_shop,mincust_shop"))
-    d.save_dataset(datas, "test_dataset_for_customers_prediction_reorder.csv")
-
-
-def reorder_test_datas_for_sales_pred():
-    datas = d.read_dataset("test_dataset_for_sales_prediction.csv")
-    datas = reorder_attributes(datas, longstring_tolist("StoreID,Date,IsHoliday,IsOpen,HasPromotions,NearestCompetitor,Region,NumberOfCustomers,NumberOfSales,Region_AreaKM2,Region_GDP,Region_PopulationK,CloudCover,Max_Dew_PointC,Max_Humidity,Max_Sea_Level_PressurehPa,Max_TemperatureC,Max_VisibilityKm,Max_Wind_SpeedKm_h,Mean_Dew_PointC,Mean_Humidity,Mean_Sea_Level_PressurehPa,Mean_TemperatureC,Mean_VisibilityKm,Mean_Wind_SpeedKm_h,Min_Dew_PointC,Min_Humidity,Min_Sea_Level_PressurehPa,Min_TemperatureC,Min_VisibilitykM,Precipitationmm,WindDirDegrees,Events_Rain,Events_Snow,Events_none,Events_Fog,Events_Thunderstorm,Events_Hail,StoreType_Hyper Market,StoreType_Super Market,StoreType_Standard Market,StoreType_Shopping Center,AssortmentType_General,AssortmentType_With Non-Food Department,AssortmentType_With Fish Department,Day,Day_Tuesday,Day_Wednesday,Day_Friday,Day_Saturday,Day_Sunday,Day_Monday,Day_Thursday,MeanSalesPerShopPerDay,StdSalesPerShopPerDay,meanshop,mean_std_shop,max_shop,min_shop"))
-    d.save_dataset(datas, "test_dataset_for_sales_prediction_reorder.csv")
-
-
-if __name__ == '__main__':
-    reorder_test_datas_for_sales_pred()
+def reorder_datas_cols(name, attrlist, nameout):
+    datas = d.read_dataset(name)
+    datas = reorder_attributes(datas, attrlist)
+    d.save_dataset(datas, nameout)
