@@ -59,9 +59,9 @@ class SalesModel(Bagging):
             x_sampled, y_sampled = self.training_ds.random_sampling(1.0)
             curr = tree.DecisionTreeRegressor()
             curr.fit(x_sampled, y_sampled)
-            tr_predictions = curr.predict(x_sampled)
+            tr_predictions = curr.predict(self.training_ds.xtr)
 
-            print("Model %s :: Sales R2 on training set: %s" % (i, eval.r2_score(y_sampled, tr_predictions)))
+            print("Model %s :: Sales R2 on training set: %s" % (i, eval.r2_score(self.training_ds.ytr, tr_predictions)))
 
             ts_predictions = curr.predict(self.testing_ds.xts)
             self.predictions.append(ts_predictions)
