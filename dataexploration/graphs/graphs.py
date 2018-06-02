@@ -1,5 +1,4 @@
 import seaborn as sb
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from dataset.utility import get_frame_in_range
