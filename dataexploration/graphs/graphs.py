@@ -343,13 +343,14 @@ def holidayplot(df, target="NumberOfSales", show=True, save=False):
 
 def meanstdscatterpershop(show=True, save=False):
     df = ds.read_dataset("best_for_customers.csv")
-    sb.lmplot(x="meancustshop", y="meancust_std_shop", data=df)
-    plt.savefig("plot.png")
+    sb.lmplot(x="meancustshop", y="meancust_std_shop", data=df, hue="StoreType_Shopping Center")
+    fig = plt.gcf()
+    fig.set_size_inches(18, 9)
 
     if show:
         plt.show()
     if save:
-        plt.savefig("meanstdscatterpershop.png")
+        fig.savefig("meanstdscatterpershop.png")
 
 
 
