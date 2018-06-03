@@ -87,7 +87,21 @@ if __name__ == "__main__":
             pl.show()
 
 
-    ax = sb.jointplot(x="NearestCompetitor", y="NumberOfSales", data=data_numeric, marker='+')
+    #ax = sb.jointplot(x="NearestCompetitor", y="NumberOfSales", data=data_numeric, marker='+')
+    #pl.show()
+    #ax = sb.jointplot(x="NearestCompetitor", y="NumberOfCustomers", data=data_numeric, marker='+')
+    #pl.show()
+
+    df = datasetfun.read_dataset()
+    num_hyperm = [] # the index identifies the region
+    for regionId in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
+        ds = df[df["StoreType"] == "Hyper Market"]
+        ds = ds[ds["Region"] == regionId]
+        num_hyperm.append(len(datasetfun.values_of(ds, "StoreID")))
+
+    print(num_hyperm)
+
+    sb.barplot(x=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], y=num_hyperm)
     pl.show()
-    ax = sb.jointplot(x="NearestCompetitor", y="NumberOfCustomers", data=data_numeric, marker='+')
-    pl.show()
+
+    sb.pointplot()
