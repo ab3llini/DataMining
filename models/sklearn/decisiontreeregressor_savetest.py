@@ -19,7 +19,22 @@ from sklearn.preprocessing import PolynomialFeatures
 
 
 def model():
-    return linear_model.Ridge(alpha=200)
+    return tree.DecisionTreeRegressor(max_depth=7)
+
+
+def corr():
+    return linear_model.Ridge()
+
+
+def printcols():
+    cols = list(datas)
+    cols.remove('NumberOfSales')
+    cols.remove('Month')
+    cols.remove('NumberOfCustomers')
+    for att in ['StoreID', 'Date', 'IsOpen', 'Region', 'CloudCover', 'Max_Sea_Level_PressurehPa', 'WindDirDegrees',
+                'Max_Dew_PointC', 'Mean_Sea_Level_PressurehPa', 'Min_Sea_Level_PressurehPa', 'Day']:
+        cols.remove(att)
+    print(cols)
 
 
 if __name__ == '__main__':
@@ -42,15 +57,31 @@ if __name__ == '__main__':
         print("TEST R2: ", eval.r2_score(datas.yts, mod.predict(datas.xts)))
         print("##########################")
 
+    preds = []
+    for i in range(n):
+        preds.append(mods[i].predict(datas.xtr))
+
+    trainpreds = np.array(preds).mean(axis=0).squeeze()
 
     preds = []
     for i in range(n):
         preds.append(mods[i].predict(datas.xts))
 
-    custpred = np.array(preds).mean(axis=0)
+    custpred = np.array(preds).mean(axis=0).squeeze()
 
-    print("TEST R2: ", eval.r2_score(datas.yts, custpred))
+    print("TREE TEST R2: ", eval.r2_score(datas.yts, custpred))
+    # tree.export_graphviz(mod.models[0])
 
-    new = pandas.DataFrame()
-    new['NumberOfCustomers'] = pandas.Series(custpred)
-    ds.save_dataset(new, "cust_ensemble_predictions9.csv")
+    correction = []
+    for i in range(len(datas.ytr)):
+        correction.append(datas.ytr[i] - trainpreds[i])
+    correction = np.array(correction)
+
+    mod = skc.LinearSklearn(1, corr)
+    mod.train(datas.xtr, correction)
+    p = mod.predict(datas.xtr).squeeze()
+    pt = mod.predict(datas.xts).squeeze()
+
+    print("FINAL TRAIN R2: ", eval.r2_score(datas.ytr, trainpreds + p))
+    print("FINAL TEST R2: ", eval.r2_score(datas.yts, custpred + pt))
+

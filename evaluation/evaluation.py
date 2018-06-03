@@ -17,7 +17,7 @@ def r2(df, preds, attr):
     return 1 - rss(df, preds, attr) / tss(df, attr)
 
 
-def region_error(real, pred, regions, shop_ids, dates):
+def region_error(real, pred, regions, shop_ids, dates, return_lists=False):
     months = np.unique(np.array([date.split("-")[1] for date in dates]))
     months = sorted(list(months))
     monthsmap = map_values_pos(months)
@@ -39,7 +39,9 @@ def region_error(real, pred, regions, shop_ids, dates):
             regions_totals[regionsmap[str(shop_region_map[str(id)])]] += total_real[shopsmap[str(id)]][monthsmap[str(m)]]
     for i in range(len(regions_errors)):
         regions_errors[i] = regions_errors[i] / regions_totals[i]
-    return regions_errors, total_real, total_pred
+    if not return_lists:
+        return regions_errors, total_real, total_pred
+    return regions_errors, total_real, total_pred, shops, months
 
 
 def getmonth(date):

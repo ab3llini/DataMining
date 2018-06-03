@@ -5,26 +5,16 @@ import numpy as np
 import preprocessing.preprocessing_utils as preprocessing
 
 # Note that the set builder will auto exclude the target, there is no need to insert it here
-default_excluded = [
-                'StoreID',
-                'Date',
-                'IsOpen',
-                'Region',
-                'CloudCover',
-                'Max_Sea_Level_PressurehPa',
-                'WindDirDegrees',
-                'Max_Dew_PointC',
-                'Mean_Sea_Level_PressurehPa',
-                'Min_Sea_Level_PressurehPa',
-                'Day'
-            ]
 
 class SetBuilder:
 
     # Can pass a different training/testing split tuple
     # If default is set to false no attributes are excluded
     # Provide only one target, default is nr of sales
-    def __init__(self, split=(3, 2016, 12, 2017, 1, 2018, 2, 2018), df=None, autoexclude=False, target='NumberOfSales', dataset='mean_var_pre_imputed_per_day.csv'):
+    def __init__(self, split=(3, 2016, 12, 2017, 1, 2018, 2, 2018), df=None, autoexclude=False, target='NumberOfSales', dataset='best_for_customers.csv'):
+
+        self.default_excluded = ['StoreID', 'Date', 'IsOpen', 'Region', 'CloudCover', 'Max_Sea_Level_PressurehPa',
+            'WindDirDegrees', 'Max_Dew_PointC', 'Mean_Sea_Level_PressurehPa', 'Min_Sea_Level_PressurehPa', 'Day']
 
         self.split = split
 
@@ -47,7 +37,7 @@ class SetBuilder:
                 print("Important: autoexclude is ON, program might crash when accessing non existing attributes")
 
         if autoexclude:
-            self.excluded = default_excluded
+            self.excluded = self.default_excluded
         else:
             self.excluded = []
 
@@ -86,11 +76,9 @@ class SetBuilder:
         sample_xtr = [self.xtr[i] for i in idxs]
         sample_ytr = [self.ytr[i] for i in idxs]
 
-        print('Done.\nTraining set has %s samples\nTesting set has %s samples' % (len(self.ytr), len(self.yts)))
+        print('Random sampling returned %s samples' % len(sample_ytr))
 
         return np.array(sample_xtr), np.array(sample_ytr)
-
-
 
     def build(self):
 
@@ -112,7 +100,9 @@ class SetBuilder:
         self.xtr = ds_util.get_frame_in_range(self.frame, self.split[0], self.split[1], self.split[2], self.split[3])
         self.xts = ds_util.get_frame_in_range(self.frame, self.split[4], self.split[5], self.split[6], self.split[7])
 
-        self.xtr = ds_handler.to_numpy(self.xtr.drop(columns=['Date', self.target]))
+        self.xtr = self.xtr.drop(columns=['Date', self.target])
+
+        self.xtr = ds_handler.to_numpy(self.xtr)
         self.xts = ds_handler.to_numpy(self.xts.drop(columns=['Date', self.target]))
 
         self.ytr = ds_util.get_frame_in_range(self.frame, self.split[0], self.split[1], self.split[2], self.split[3])
@@ -121,7 +111,6 @@ class SetBuilder:
         self.yts = ds_util.get_frame_in_range(self.frame, self.split[4], self.split[5], self.split[6], self.split[7])
         self.yts = ds_handler.to_numpy(self.yts[[self.target]])
 
-        print('Done.\nTraining set has %s samples\nTesting set has %s samples'
-              % (len(self.ytr), len(self.yts)))
+        print('Setbuilder: #xtr = %s, #ytr = %s, #xts = %s, #yts = %s' % (len(self.xtr), len(self.ytr), len(self.xts), len(self.yts)))
 
         return self
