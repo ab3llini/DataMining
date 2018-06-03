@@ -266,10 +266,18 @@ def frequencypershop(df, storeID, target="NumberOfSales", daily=False, shoptype=
             sb.boxplot(x="StoreID", y=target, data=df).set_title(title)
             plt.legend()
         elif storeID == -2:
-            df = df[df["StoreType_Hyper Market"] == 1]
+            df = df[df["StoreType_Shopping Center"] == 1]
             for id in values_of(df, "StoreID"):
-                sb.distplot(a=df[df["StoreID"] == id][target], hist=False).set_title(title)
-                print(id)
+                sb.distplot(a=df[df["StoreID"] == id][target], hist=False, label=str(id)).set_title(title)
+            plt.legend()
+        elif storeID == -3:
+            df1 = df[df["StoreID"] == 1307]
+            df2 = df[df["StoreID"] == 1330]
+            df = pd.concat([df1, df2])
+            sb.distplot(a=df[df["StoreID"] == 1307]["NumberOfSales"], hist=False, label="1307 - Sales").set_title(title)
+            sb.distplot(a=df[df["StoreID"] == 1307]["NumberOfCustomers"], hist=False, label="1307 - Customers").set_title(title)
+            sb.distplot(a=df[df["StoreID"] == 1330]["NumberOfSales"], hist=False, label="1330 - Sales").set_title(title)
+            sb.distplot(a=df[df["StoreID"] == 1330]["NumberOfCustomers"], hist=False, label="1330 - Customers").set_title(title)
             plt.legend()
         else:
             sb.distplot(a=df[target]).set_title(title)
