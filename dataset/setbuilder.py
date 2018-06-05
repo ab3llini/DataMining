@@ -11,6 +11,12 @@ class SetBuilder:
     # Can pass a different training/testing split tuple
     # If default is set to false no attributes are excluded
     # Provide only one target, default is nr of sales
+    # split might be an array of array containing multiple splits like:
+    # split [
+    # [(train tuple interval one), (training tuple interval two)],
+    # [(test tuple interval one), (test tuple interval two)]
+    # ]
+
     def __init__(self, split=(3, 2016, 12, 2017, 1, 2018, 2, 2018), df=None, autoexclude=False, target='NumberOfSales', dataset='best_for_customers.csv'):
 
         self.default_excluded = ['StoreID', 'Date', 'IsOpen', 'Region', 'CloudCover', 'Max_Sea_Level_PressurehPa',
@@ -80,6 +86,22 @@ class SetBuilder:
 
         return np.array(sample_xtr), np.array(sample_ytr)
 
+    def get_training(self, interval):
+        xtr = ds_util.get_frame_in_range(self.frame, interval[0], interval[1], interval[2], interval[3])
+        ytr = xtr.copy()
+        xtr = xtr.drop(columns=['Date', self.target])
+        ytr = ytr[[self.target]]
+
+        return xtr, ytr
+
+    def get_testing(self, interval):
+        xts = ds_util.get_frame_in_range(self.frame, interval[0], interval[1], interval[2], interval[3])
+        yts = xts.copy()
+        xts = xts.drop(columns=['Date', self.target])
+        yts = yts[[self.target]]
+
+        return xts, yts
+
     def build(self):
 
         if self.filter is not None:
@@ -97,19 +119,40 @@ class SetBuilder:
         print("Building training and testing set")
         print("Excluded attributes = %s" % self.excluded)
 
-        self.xtr = ds_util.get_frame_in_range(self.frame, self.split[0], self.split[1], self.split[2], self.split[3])
-        self.xts = ds_util.get_frame_in_range(self.frame, self.split[4], self.split[5], self.split[6], self.split[7])
+        if type(self.split) is tuple:
 
-        self.xtr = self.xtr.drop(columns=['Date', self.target])
+            print("Split strategy = sequential")
+
+            self.xtr, self.ytr = self.get_training((self.split[0], self.split[1], self.split[2], self.split[3]))
+            self.xts, self.yts = self.get_training((self.split[4], self.split[5], self.split[6], self.split[7]))
+
+        else:
+
+            print("Split strategy = interleaved")
+
+            training_tuples = self.split[0]
+            testing_tuples = self.split[1]
+
+            for interval in training_tuples:
+                if self.xtr is None:
+                    self.xtr, self.ytr = self.get_training(interval)
+                else:
+                    delta_xtr, delta_ytr = self.get_training(interval)
+                    self.xtr.append(delta_xtr)
+                    self.ytr.append(delta_ytr)
+
+            for interval in testing_tuples:
+                if self.xts is None:
+                    self.xts, self.yts = self.get_testing(interval)
+                else:
+                    delta_xts, delta_yts = self.get_testing(interval)
+                    self.xts.append(delta_xts)
+                    self.yts.append(delta_yts)
 
         self.xtr = ds_handler.to_numpy(self.xtr)
-        self.xts = ds_handler.to_numpy(self.xts.drop(columns=['Date', self.target]))
-
-        self.ytr = ds_util.get_frame_in_range(self.frame, self.split[0], self.split[1], self.split[2], self.split[3])
-        self.ytr = ds_handler.to_numpy(self.ytr[[self.target]])
-
-        self.yts = ds_util.get_frame_in_range(self.frame, self.split[4], self.split[5], self.split[6], self.split[7])
-        self.yts = ds_handler.to_numpy(self.yts[[self.target]])
+        self.ytr = ds_handler.to_numpy(self.ytr)
+        self.xts = ds_handler.to_numpy(self.xts)
+        self.yts = ds_handler.to_numpy(self.yts)
 
         print('Setbuilder: #xtr = %s, #ytr = %s, #xts = %s, #yts = %s' % (len(self.xtr), len(self.ytr), len(self.xts), len(self.yts)))
 

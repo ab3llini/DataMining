@@ -8,7 +8,13 @@ import models.sklearn.persistence as pr
 print("Plain Decision regression tree without bagging")
 
 # Build training & test sets
-data = sb.SetBuilder(target='NumberOfCustomers', autoexclude=True, dataset='mean_var_on_cust_from_tain.csv').exclude('NumberOfSales').build()
+#
+data = sb.SetBuilder(
+    target='NumberOfCustomers',
+    autoexclude=True,
+    dataset='best_for_customers.csv',
+).exclude('NumberOfSales', 'Month').build()
+
 # data = sb.SetBuilder(target='NumberOfSales', autoexclude=True, dataset='mean_var_on_cust_from_tain.csv').build()
 
 # Performs simple linear regression
@@ -26,7 +32,7 @@ ypred = dtree.predict(data.xts)
 print('R2 = %s' % eval.evaluate(data.yts, ypred))
 print("Plain Decision regression tree without bagging")
 
-it = 100
+it = 10
 yy = []
 for i in range(it):
     bagx, bagy = data.random_sampling(1)

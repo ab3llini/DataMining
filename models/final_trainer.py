@@ -174,8 +174,8 @@ print("******* Beginning final training & prediction")
 csv_cust = "final_customer_predictions.csv"
 csv_sales = "final_sales_predictions.csv"
 
-bagging_count_cust = 10
-bagging_count_sales = 10
+bagging_count_cust = 50
+bagging_count_sales = 50
 
 
 # Stage 1 : Customer prediction
