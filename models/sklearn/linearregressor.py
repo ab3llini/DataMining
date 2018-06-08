@@ -36,7 +36,7 @@ dates = ds.to_numpy(datas[['Date']]).squeeze()
 ids = ds.to_numpy(datas[['StoreID']]).squeeze()
 
 def mod():
-    return skl.linear_model.LinearRegression()
+    return skl.linear_model.Ridge(200)
 
 
 for i in range(SET_OF_MODELS_DIM):

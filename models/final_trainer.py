@@ -46,14 +46,14 @@ class SalesModel(Bagging):
         self.training_ds = sb.SetBuilder(
             target='NumberOfSales',
             autoexclude=True,
-            split=(3, 2016, 2, 2018, 2, 2018, 2, 2018),  # It doesn't matter the second split
+            split=[[(3, 2016, 2, 2018)], []],
             dataset="final_for_sales_train.csv"
         ).exclude('Month').build()
 
         self.testing_ds = sb.SetBuilder(
             target='NumberOfSales',
             autoexclude=True,
-            split=(3, 2018, 4, 2018, 3, 2018, 4, 2018),  # It doesn't matter the first split
+            split=[[], [(3, 2018, 4, 2018)]],
             df=target
         ).exclude('Month').build()
 
@@ -100,14 +100,14 @@ class CustomerModel(Bagging):
         self.training_ds = sb.SetBuilder(
             target='NumberOfCustomers',
             autoexclude=True,
-            split=(3, 2016, 2, 2018, 2, 2018, 2, 2018),  # It doesn't matter the second split
+            split=[[(3, 2016, 2, 2018)], []],
             dataset="final_for_customer_train.csv"
         ).exclude('NumberOfSales', 'Month').build()
 
         self.testing_ds = sb.SetBuilder(
             target='NumberOfCustomers',
             autoexclude=True,
-            split=(3, 2018, 4, 2018, 3, 2018, 4, 2018),  # It doesn't matter the first split
+            split=[[], [(3, 2018, 4, 2018)]],
             dataset="final_for_customer_test_r.csv"
         ).exclude('NumberOfSales', 'Month').build()
 
@@ -174,8 +174,8 @@ print("******* Beginning final training & prediction")
 csv_cust = "final_customer_predictions.csv"
 csv_sales = "final_sales_predictions.csv"
 
-bagging_count_cust = 50
-bagging_count_sales = 50
+bagging_count_cust = 10
+bagging_count_sales = 10
 
 
 # Stage 1 : Customer prediction

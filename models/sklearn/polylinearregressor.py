@@ -19,7 +19,7 @@ import models.sklearn.persistence as pr
 # PREDICTION OF CUSTOMERS : R2 = 0.847136789595
 
 # Build training & test sets
-data = sb.SetBuilder(target='NumberOfSales', autoexclude=False).only(['NearestCompetitor', 'Region_AreaKM2']).build()
+data = sb.SetBuilder(target='NumberOfCustomers', autoexclude=False, dataset='best_for_customers.csv').exclude('Month', 'NumberOfSales').build()
 # data = sb.SetBuilder(target='NumberOfSales').exclude('Day').build()
 
 poly_degree = 2
