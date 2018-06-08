@@ -60,11 +60,9 @@ class SetBuilder:
         return self
 
     # Apply before BUILD
-    def only(self, columns):
-        columns.append(self.target)
-        if 'Date' not in columns:
-            columns.append('Date')
-            self.frame = self.frame[columns]
+    def only(self, col):
+
+        self.frame = self.frame[[self.target, 'Date', col]]
 
         return self
 
@@ -121,14 +119,19 @@ class SetBuilder:
 
         if type(self.split) is tuple:
 
-            print("Split strategy = sequential")
+            print("----> Split strategy = sequential")
+
+            print("---> Training set intervals: " + str(self.split[0:4]))
+            print("---> Testing set intervals: " + str(self.split[4:]))
 
             self.xtr, self.ytr = self.get_training((self.split[0], self.split[1], self.split[2], self.split[3]))
             self.xts, self.yts = self.get_training((self.split[4], self.split[5], self.split[6], self.split[7]))
 
         else:
 
-            print("Split strategy = interleaved")
+            print("----> Split strategy = interleaved")
+            print("---> Training set intervals: " + str(self.split[0]))
+            print("---> Testing set intervals: " + str(self.split[1]))
 
             training_tuples = self.split[0]
             testing_tuples = self.split[1]
@@ -149,11 +152,15 @@ class SetBuilder:
                     self.xts.append(delta_xts)
                     self.yts.append(delta_yts)
 
-        self.xtr = ds_handler.to_numpy(self.xtr)
-        self.ytr = ds_handler.to_numpy(self.ytr)
-        self.xts = ds_handler.to_numpy(self.xts)
-        self.yts = ds_handler.to_numpy(self.yts)
-
-        print('Setbuilder: #xtr = %s, #ytr = %s, #xts = %s, #yts = %s' % (len(self.xtr), len(self.ytr), len(self.xts), len(self.yts)))
+        if self.xtr is not None:
+            self.xtr = ds_handler.to_numpy(self.xtr)
+            print('--> Training instances = %s' % len(self.xtr))
+        if self.ytr is not None:
+            self.ytr = ds_handler.to_numpy(self.ytr)
+        if self.xts is not None:
+            print('--> Testing instances = %s' % len(self.xts))
+            self.xts = ds_handler.to_numpy(self.xts)
+        if self.yts is not None:
+            self.yts = ds_handler.to_numpy(self.yts)
 
         return self

@@ -15,7 +15,6 @@ def get_frame_in_range(f, bm, by, em, ey):
     try :
         f["Date"] = pd.to_datetime(f["Date"], format="%d/%m/%Y")
     except Exception as e:
-        print("*** Next time use the standard data format %d/%m/%Y, i was going to make this program crash :)")
         try:
             f["Date"] = pd.to_datetime(f["Date"], format="%Y-%m-%d")
         except TypeError as e2:

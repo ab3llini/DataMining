@@ -1,46 +1,37 @@
 import dataset.utility as dsutil
 import dataset.dataset as ds
-import seaborn as sb
+import seaborn as sea
+import dataset.setbuilder as sb
+from sklearn import linear_model
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import models.sklearn.evaluator as eval
+from sklearn.preprocessing import PolynomialFeatures
 
 
-
-f = ds.read_dataset("mean_var_pre_imputed.csv")
-
-
-yrs = [dsutil.get_frame_in_range(f, 3, 2016, 2, 2017), dsutil.get_frame_in_range(f, 3, 2017, 2, 2018)]
-
-regions = ds.values_of(f, 'Region')
-
-data = {'2016/2017': {}, '2017/2018': {}}
-
-plt_x = []
+data = sb.SetBuilder(
+    target="NumberOfSales",
+    dataset="final_for_sales_train.csv",
+    autoexclude=False,
+    split=[[(3, 2016, 1, 2018)], [(3, 2016, 2, 2018)]]
+).only('NearestCompetitor').build()
 
 
-for year, (x, y, z, w) in enumerate([(3, 2016, 2, 2017), (3, 2017, 2, 2018)]):
+poly_degree = 2
 
-    while (x - 1, y) != (z, w):
+# Performs simple linear regression
+print("Linear regression started, polynomial degree = %s" % poly_degree)
+poly = PolynomialFeatures(degree=poly_degree)
+xtr_ = poly.fit_transform(data.xtr)
+xts_ = poly.fit_transform(data.xts)
 
-        plt_x.append("%s" % x)
+model = linear_model.LinearRegression()
 
-        curr_m = dsutil.get_frame_in_range(yrs[year], x, y, x, y)
+model.fit(data.xtr, data.ytr)
 
-        key = '2016/2017' if year == 0 else '2017/2018'
+print(eval.evaluate(data.ytr, model.predict(data.xtr)))
+print(eval.evaluate(data.yts, model.predict(data.xts)))
 
-        data[key][str(x)] = {}
-
-        for r in regions:
-
-            r_mean = (curr_m.loc[curr_m["Region"] == r])["NumberOfCustomers"].mean()
-            print("m %s, y %s, region %s, mean %s" % (x, y, r, r_mean))
-
-            data[key][str(x)][str(r)] = r_mean
-
-        x = (x + 1 if x < 12 else 1)
-        y = (y + 1 if x == 1 else y)
-
-
-
-print(data)
+print(model.coef_)
+print(model.intercept_)

@@ -19,7 +19,9 @@ data = sb.SetBuilder(
 
 # Performs simple linear regression
 
-dtree = tree.DecisionTreeRegressor()
+depth=8
+
+dtree = tree.DecisionTreeRegressor(max_depth=depth)
 dtree.fit(data.xtr, data.ytr)
 ypred = dtree.predict(data.xts)
 
@@ -28,15 +30,15 @@ pr.save_model(dtree, 'decision_tree_cust')
 dtree = pr.load_model('decision_tree_cust')
 ypred = dtree.predict(data.xts)
 
-
-print('R2 = %s' % eval.evaluate(data.yts, ypred))
+print('R2 train = %s' % eval.evaluate(data.ytr, dtree.predict(data.xtr)))
+print('R2 test = %s' % eval.evaluate(data.yts, ypred))
 print("Plain Decision regression tree without bagging")
 
 it = 10
 yy = []
 for i in range(it):
     bagx, bagy = data.random_sampling(1)
-    dt = tree.DecisionTreeRegressor()
+    dt = tree.DecisionTreeRegressor(max_depth=depth)
     dt.fit(bagx, bagy)
     pr.save_model(dt, 'dt_cust_bootstraping_%s' % i)
     y = dt.predict(data.xts)

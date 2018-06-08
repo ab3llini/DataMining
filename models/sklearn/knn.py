@@ -16,29 +16,8 @@ def model():
 
 
 if __name__ == '__main__':
+
     datas = ds.read_dataset("best_for_customers.csv")
-
-    '''
-    datas['Month'] = datas['Date']
-    datas['Month'] = datas['Month'].apply(lambda x: x.split("-")[1])
-    datas = imp.one_hot_numeric(datas, 'Month', 'Month_')
-    datas = imp.one_hot_numeric(datas, 'Region', 'Region_')
-    datas = preprocessing_utils.mean_cust_per_month_per_region(datas, utils.get_frame_in_range(datas, 3, 2016, 12, 2017))
-    '''
-
-    # With MinMaxScaler performance dropped a lot. Consider reverting
-    min_max_scaler = preprocessing.MinMaxScaler()
-
-    datas[['NumberOfSales', 'NumberOfCustomers', 'MeanCustPerShopPerDay', 'maxcust_shop', 'MeanCustPerRegionPerMonth', 'MeanCustPerShopPerMonth',
-           'meancust_std_shop', 'meancustshop', 'mincust_shop']] = pd.DataFrame(min_max_scaler.fit_transform(datas[['NumberOfSales',
-                                                                                                       'NumberOfCustomers',
-                                                                                                       'MeanCustPerShopPerDay',
-                                                                                                       'maxcust_shop',
-                                                                                                       'MeanCustPerRegionPerMonth',
-                                                                                                        'MeanCustPerShopPerMonth',
-                                                                                                       'meancust_std_shop',
-                                                                                                       'meancustshop',
-                                                                                                       'mincust_shop']]))
 
     datas = sb.SetBuilder(target='NumberOfCustomers', autoexclude=True, df=datas).exclude('NumberOfSales', 'Month').build()
 
