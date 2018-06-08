@@ -2,6 +2,7 @@ import dataset.dataset as ds_handler
 import dataset.utility as ds_util
 import random
 import numpy as np
+import pandas as pd
 import preprocessing.preprocessing_utils as preprocessing
 
 # Note that the set builder will auto exclude the target, there is no need to insert it here
@@ -134,20 +135,21 @@ class SetBuilder:
             testing_tuples = self.split[1]
 
             for interval in training_tuples:
+
                 if self.xtr is None:
                     self.xtr, self.ytr = self.get_training(interval)
                 else:
                     delta_xtr, delta_ytr = self.get_training(interval)
-                    self.xtr.append(delta_xtr)
-                    self.ytr.append(delta_ytr)
+                    self.xtr = pd.concat([self.xtr, delta_xtr])
+                    self.ytr = pd.concat([self.ytr, delta_ytr])
 
             for interval in testing_tuples:
                 if self.xts is None:
                     self.xts, self.yts = self.get_testing(interval)
                 else:
                     delta_xts, delta_yts = self.get_testing(interval)
-                    self.xts.append(delta_xts)
-                    self.yts.append(delta_yts)
+                    self.xts = pd.concat([self.xts, delta_xts])
+                    self.yts = pd.concat([self.yts, delta_yts])
 
         self.xtr = ds_handler.to_numpy(self.xtr)
         self.ytr = ds_handler.to_numpy(self.ytr)

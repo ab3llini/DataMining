@@ -26,6 +26,23 @@ def get_frame_in_range(f, bm, by, em, ey):
     return f.loc[mask]
 
 
+def get_frame_out_of_range(f, bm, by, em, ey):
+
+    try :
+        f["Date"] = pd.to_datetime(f["Date"], format="%d/%m/%Y")
+    except Exception as e:
+        print("*** Next time use the standard data format %d/%m/%Y, i was going to make this program crash :)")
+        try:
+            f["Date"] = pd.to_datetime(f["Date"], format="%Y-%m-%d")
+        except TypeError as e2:
+            print("*** can't get frame in range ! wtf format did you use for the date ??!")
+            raise e2
+
+    mask = (f['Date'] < datetime.datetime(by, bm, 1)) | (f['Date'] > datetime.datetime(ey, em, calendar.monthrange(ey, em)[1]))
+    return f.loc[mask]
+
+
+
 '''
 ------------------------------------------------------------------------------------
 # Sample usage to plot a bar chart representing the number of entries per each month
