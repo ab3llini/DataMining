@@ -16,7 +16,7 @@ def gen_pandas_cols():
     return np.array(shops_col), np.array(months_col), np.array(sales_col)
 
 
-name_precitions_csv = "final_sales_predictions.csv"
+name_precitions_csv = "final_sales_predictions_new1.csv"
 name_original_csv = "final_for_sales_test_r.csv"
 
 preds = d.to_numpy(d.read_dataset(name_precitions_csv)).squeeze()
@@ -37,14 +37,18 @@ print(months)
 
 
 sh, mo, sa = gen_pandas_cols()
+print(len(shops))
+sa = np.array(sa, np.int)
+print(sa.min())
 final_sub = pd.DataFrame()
 final_sub['StoreID'] = pd.Series(sh)
 final_sub['Month'] = pd.Series(mo)
 final_sub['NumberOfSales'] = pd.Series(sa)
 
 print(final_sub)
+d.save_dataset(final_sub, "final_sub_new1.csv")
 
-
+print(d.to_numpy(final_sub['NumberOfSales']).sum())
 # ADDING MORE STATISTICS
 trainset = "final_for_sales_train.csv"
 
@@ -52,5 +56,4 @@ trainds = d.read_dataset(trainset)
 final_sub_stats = preu.mean_sales_per_month_per_shop(final_sub, trainds)
 final_sub_stats['Ratio'] = final_sub_stats['NumberOfSales']/final_sub_stats['MeanSalesPerShopPerMonth']
 print(final_sub_stats)
-d.save_dataset(final_sub_stats, "final_sub_with_stats.csv")
 

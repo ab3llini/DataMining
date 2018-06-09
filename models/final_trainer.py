@@ -113,7 +113,7 @@ class CustomerModel(Bagging):
 
     @staticmethod
     def model():
-        return linear_model.Ridge(alpha=200)
+        return tree.DecisionTreeRegressor(max_depth=9)
 
     def fit(self):
 
@@ -171,11 +171,11 @@ STAGE THREE
 
 print("******* Beginning final training & prediction")
 
-csv_cust = "final_customer_predictions.csv"
-csv_sales = "final_sales_predictions.csv"
+csv_cust = "final_customer_predictions_new1.csv"
+csv_sales = "final_sales_predictions_new1.csv"
 
-bagging_count_cust = 10
-bagging_count_sales = 10
+bagging_count_cust = 20
+bagging_count_sales = 20
 
 
 # Stage 1 : Customer prediction
