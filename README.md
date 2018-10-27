@@ -1,6 +1,6 @@
 # Data-Mining
 
-![The idea](/Model evaluation.png?raw=true)
+![Model evolution](/Model evolution.png?raw=true)
 
 ## Overview
 This is a project developed during the course we took in Data Mining and Text Mining on our first year of Master degree.
