@@ -1,6 +1,7 @@
 # Data-Mining
 
 ![Model evolution](/model.png?raw=true)
+![Model structure](/model2.png?raw=true)
 
 ## Overview
 This is a project developed during the course we took in Data Mining and Text Mining on our first year of Master degree.
