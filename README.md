@@ -1,5 +1,8 @@
 # Data-Mining
 
+![The idea](/Model evaluation.png?raw=true)
+
+## Overview
 This is a project developed during the course we took in Data Mining and Text Mining on our first year of Master degree.
 
 We were given a huge dataset with information about sales and customers for hundreds of different store distributed across Europe. Each entry consisted of more than 50 features. and there were approximately 550K entries for the training set.
