@@ -1,4 +1,4 @@
-# Data-Mining
+# Data-Mining project
 
 ![Model evolution](/model.png?raw=true)
 ![Model structure](/model2.png?raw=true)
